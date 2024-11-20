@@ -3,37 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chat App</title>
-  <script src="/socket.io/socket.io.js"></script>
+  <title>Enter Your Name</title>
 </head>
 <body>
-  <h1>Real-Time Chat</h1>
-  <ul id="messages"></ul>
-  <form id="form" action="">
-    <input id="input" autocomplete="off" /><button>Send</button>
+  <h1>Welcome to the Chat</h1>
+  <form id="nameForm">
+    <label for="username">Enter your name: </label>
+    <input type="text" id="username" required />
+    <button type="submit">Enter Chat</button>
   </form>
 
   <script>
-    const socket = io();
-
-    // ส่งข้อความเมื่อกดปุ่มส่ง
-    const form = document.getElementById('form');
-    const input = document.getElementById('input');
+    const form = document.getElementById('nameForm');
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      if (input.value) {
-        socket.emit('chat message', input.value);
-        input.value = '';
+      const username = document.getElementById('username').value;
+      if (username) {
+        localStorage.setItem('username', username);  // Save username in localStorage
+        window.location.href = 'chat.html';  // Redirect to chat page
       }
-    });
-
-    // แสดงข้อความเมื่อได้รับจากเซิร์ฟเวอร์
-    const messages = document.getElementById('messages');
-    socket.on('chat message', (msg) => {
-      const item = document.createElement('li');
-      item.textContent = msg;
-      messages.appendChild(item);
-      window.scrollTo(0, document.body.scrollHeight);
     });
   </script>
 </body>

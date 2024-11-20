@@ -1,34 +1,31 @@
-const express = require('express'); // Express framework
-const http = require('http'); // Node.js HTTP module
-const { Server } = require('socket.io'); // Socket.IO for real-time communication
-const path = require('path'); // Path module for file handling
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
+const path = require('path');
 
-const app = express(); // Create Express app
-const server = http.createServer(app); // Create HTTP server
-const io = new Server(server); // Attach Socket.IO to the server
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 
-// Serve static files from the "public" folder
+// เสิร์ฟไฟล์ HTML
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Handle Socket.IO connections
+// เมื่อเชื่อมต่อกับ Socket.IO
 io.on('connection', (socket) => {
   console.log('A user connected');
 
-  // Listen for chat messages from the client
-  socket.on('chat message', (msg) => {
-    console.log('Message: ' + msg);
-
-    // Broadcast the message to all connected clients
-    io.emit('chat message', msg);
+  // รับข้อความจาก client
+  socket.on('chat message', (data) => {
+    console.log('Message from ' + data.username + ": " + data.message);  // ดูข้อความใน Console
+    io.emit('chat message', data);  // ส่งข้อมูลไปทุกคน (ข้อความและชื่อผู้ส่ง)
   });
 
-  // Handle user disconnect
   socket.on('disconnect', () => {
     console.log('A user disconnected');
   });
 });
 
-// Start the server on port 3000
+// เริ่มเซิร์ฟเวอร์
 server.listen(3000, () => {
   console.log('Server is running on http://localhost:3000');
 });
