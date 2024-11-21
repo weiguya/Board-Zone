@@ -3,25 +3,99 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Enter Your Name</title>
+  <title>BoardZone - Welcome</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+    p {
+      font-size: 1.2em;
+      margin-bottom: 30px;
+    }
+    form {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+      margin-bottom: 20px;
+    }
+    .avatars {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .avatar {
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      border-radius: 50%;
+      transition: border-color 0.3s;
+    }
+    .avatar:hover {
+      border-color: blue;
+    }
+    .avatar.selected {
+      border-color: green;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1.2em;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-  <h1>Welcome to the Chat</h1>
-  <form id="nameForm">
-    <label for="username">Enter your name: </label>
-    <input type="text" id="username" required />
-    <button type="submit">Enter Chat</button>
+  <h1>Welcome to BoardZone</h1>
+  <p>เข้าร่วมโต๊ะบอร์ดเกมส์ที่มันที่สุดในวงเหล้า ณ เพลานี้</p>
+  <form id="welcomeForm">
+    <input type="text" id="username" placeholder="Enter your name" required>
+    <div class="avatars">
+      <img src="avatar1.png" alt="Avatar 1" class="avatar" data-avatar="avatar1.png">
+      <img src="avatar2.png" alt="Avatar 2" class="avatar" data-avatar="avatar2.png">
+      <img src="avatar3.png" alt="Avatar 3" class="avatar" data-avatar="avatar3.png">
+    </div>
+    <button type="submit">เข้าสู่เกม</button>
   </form>
 
   <script>
-    const form = document.getElementById('nameForm');
+    const avatars = document.querySelectorAll('.avatar');
+    let selectedAvatar = null;
+
+    // การเลือกไอคอน
+    avatars.forEach(avatar => {
+      avatar.addEventListener('click', () => {
+        if (selectedAvatar) selectedAvatar.classList.remove('selected');
+        avatar.classList.add('selected');
+        selectedAvatar = avatar;
+      });
+    });
+
+    // การบันทึกข้อมูลและยืนยัน
+    const form = document.getElementById('welcomeForm');
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const username = document.getElementById('username').value;
-      if (username) {
-        localStorage.setItem('username', username);  // Save username in localStorage
-        window.location.href = 'chat.html';  // Redirect to chat page
+      if (!username || !selectedAvatar) {
+        alert('กรุณากรอกชื่อและเลือกไอคอน');
+        return;
       }
+      localStorage.setItem('username', username);
+      localStorage.setItem('avatar', selectedAvatar.dataset.avatar);
+      alert('เข้าสู่เกมสำเร็จ!');
+      // Redirect ไปหน้าถัดไป
+      window.location.href = 'nextpage.html';
     });
   </script>
 </body>
