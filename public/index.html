@@ -25,27 +25,6 @@
       font-size: 1em;
       margin-bottom: 20px;
     }
-    .avatars {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    .avatar {
-      width: 64px;
-      height: 64px;
-      cursor: pointer;
-      border: 2px solid transparent;
-      border-radius: 50%;
-      transition: border-color 0.3s;
-    }
-    .avatar:hover {
-      border-color: blue;
-    }
-    .avatar.selected {
-      border-color: green;
-    }
     button {
       padding: 10px 20px;
       font-size: 1.2em;
@@ -57,46 +36,19 @@
   <h1>Welcome to BoardZone</h1>
   <form id="welcomeForm">
     <input type="text" id="username" placeholder="Enter your name" required>
-    <div class="avatars">
-      <!-- แสดงไอคอน -->
-      <img src="icons/icon1.png" alt="Icon 1" class="avatar" data-avatar="icons/icon1.png">
-      <img src="icons/icon2.png" alt="Icon 2" class="avatar" data-avatar="icons/icon2.png">
-      <img src="icons/icon3.png" alt="Icon 3" class="avatar" data-avatar="icons/icon3.png">
-      <img src="icons/icon4.png" alt="Icon 4" class="avatar" data-avatar="icons/icon4.png">
-      <img src="icons/icon5.png" alt="Icon 5" class="avatar" data-avatar="icons/icon5.png">
-      <img src="icons/icon6.png" alt="Icon 6" class="avatar" data-avatar="icons/icon6.png">
-      <img src="icons/icon7.png" alt="Icon 7" class="avatar" data-avatar="icons/icon7.png">
-      <img src="icons/icon8.png" alt="Icon 8" class="avatar" data-avatar="icons/icon8.png">
-      <img src="icons/icon9.png" alt="Icon 9" class="avatar" data-avatar="icons/icon9.png">
-      <img src="icons/icon10.png" alt="Icon 10" class="avatar" data-avatar="icons/icon10.png">
-    </div>
     <button type="submit">Enter Game</button>
   </form>
 
   <script>
-    const avatars = document.querySelectorAll('.avatar');
-    let selectedAvatar = null;
-
-    // การเลือกไอคอน
-    avatars.forEach(avatar => {
-      avatar.addEventListener('click', () => {
-        if (selectedAvatar) selectedAvatar.classList.remove('selected');
-        avatar.classList.add('selected');
-        selectedAvatar = avatar;
-      });
-    });
-
-    // การบันทึกข้อมูลและยืนยัน
     const form = document.getElementById('welcomeForm');
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const username = document.getElementById('username').value;
-      if (!username || !selectedAvatar) {
-        alert('กรุณากรอกชื่อและเลือกไอคอน');
+      if (!username) {
+        alert('Please enter your name');
         return;
       }
       localStorage.setItem('username', username);
-      localStorage.setItem('avatar', selectedAvatar.dataset.avatar);
       window.location.href = 'chat.html';
     });
   </script>
