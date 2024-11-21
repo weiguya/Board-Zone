@@ -8,48 +8,35 @@
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      margin: 0;
       padding: 20px;
     }
     h1 {
-      font-size: 2.5em;
-      margin-bottom: 10px;
-    }
-    form {
-      max-width: 400px;
-      margin: 0 auto;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 10px;
-      font-size: 1em;
+      font-size: 2em;
       margin-bottom: 20px;
     }
-    button {
-      padding: 10px 20px;
-      font-size: 1.2em;
-      cursor: pointer;
+    input, button {
+      padding: 10px;
+      font-size: 1em;
+      margin: 10px;
     }
   </style>
 </head>
 <body>
-  <h1>Welcome to BoardZone</h1>
+  <h1>ยินดีต้อนรับสู่ BoardZone</h1>
   <form id="welcomeForm">
     <input type="text" id="username" placeholder="Enter your name" required>
-    <button type="submit">Enter Game</button>
+    <button type="submit">เข้าสู่เกม</button>
   </form>
-
   <script>
-    const form = document.getElementById('welcomeForm');
-    form.addEventListener('submit', (e) => {
+    document.getElementById('welcomeForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const username = document.getElementById('username').value;
-      if (!username) {
-        alert('Please enter your name');
-        return;
+      if (username) {
+        localStorage.setItem('username', username);
+        window.location.href = 'select.html';
+      } else {
+        alert('กรุณากรอกชื่อ');
       }
-      localStorage.setItem('username', username);
-      window.location.href = 'chat.html';
     });
   </script>
 </body>
