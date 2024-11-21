@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Room</title>
+</head>
+<body>
+  <h1>สร้างห้อง</h1>
+  <form id="createRoomForm">
+    <input type="text" id="roomName" placeholder="ชื่อห้อง" required>
+    <input type="number" id="maxPlayers" placeholder="จำนวนผู้เล่น" required>
+    <button type="submit">ยืนยัน</button>
+  </form>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const username = localStorage.getItem('username');
+
+    document.getElementById('createRoomForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const roomName = document.getElementById('roomName').value;
+      const maxPlayers = document.getElementById('maxPlayers').value;
+      if (roomName && maxPlayers) {
+        socket.emit('create room', { roomName, maxPlayers });
+        window.location.href = 'waiting-room.html';
+      } else {
+        alert('กรุณากรอกข้อมูลให้ครบ');
+      }
+    });
+  </script>
+</body>
+</html>
