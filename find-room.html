@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Room</title>
+</head>
+<body>
+  <h1>ค้นหาห้อง</h1>
+  <ul id="roomList"></ul>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const roomList = document.getElementById('roomList');
+
+    socket.on('rooms updated', (rooms) => {
+      roomList.innerHTML = '';
+      Object.keys(rooms).forEach((roomName) => {
+        const room = rooms[roomName];
+        const li = document.createElement('li');
+        li.innerHTML = `${roomName} (${room.players.length}/${room.maxPlayers})
+          <button onclick="joinRoom('${roomName}')">ขอเข้าร่วม</button>`;
+        roomList.appendChild(li);
+      });
+    });
+
+    function joinRoom(roomName) {
+      socket.emit('request join', { roomName });
+    }
+  </script>
+</body>
+</html>
