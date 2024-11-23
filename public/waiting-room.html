@@ -7,13 +7,54 @@
   <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Waiting for Players</h1>
-    <ul id="playerList"></ul>
-    <div>
-      <textarea id="chatInput" rows="3" placeholder="Type your message..."></textarea>
-      <button id="sendChat">Send</button>
-    </div>
-  </div>
+  <h1>Waiting Room</h1>
+  <h2 id="roomName"></h2>
+  <h3>Players</h3>
+  <ul id="playerList"></ul>
+
+  <h3>Chat</h3>
+  <ul id="chatMessages"></ul>
+  <form id="chatForm">
+    <input type="text" id="chatInput" placeholder="Type a message..." required>
+    <button type="submit">Send</button>
+  </form>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const roomName = localStorage.getItem('roomName');
+    const playerName = localStorage.getItem('playerName');
+
+    document.getElementById('roomName').textContent = `Room: ${roomName}`;
+
+    socket.emit('create room', { roomName, playerName });
+
+    // รับข้อมูลการอัปเดตรายชื่อผู้เล่น
+    socket.on('room updated', ({ players }) => {
+      const playerList = document.getElementById('playerList');
+      playerList.innerHTML = '';
+      players.forEach((player) => {
+        const li = document.createElement('li');
+        li.textContent = player.name;
+        playerList.appendChild(li);
+      });
+    });
+
+    // รับข้อความแชทใหม่
+    socket.on('chat message', ({ playerName, message }) => {
+      const chatMessages = document.getElementById('chatMessages');
+      const li = document.createElement('li');
+      li.textContent = `${playerName}: ${message}`;
+      chatMessages.appendChild(li);
+    });
+
+    // ส่งข้อความแชท
+    document.getElementById('chatForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const message = document.getElementById('chatInput').value;
+      socket.emit('chat message', { roomName, playerName, message });
+      document.getElementById('chatInput').value = '';
+    });
+  </script>
 </body>
 </html>
