@@ -18,19 +18,23 @@
 
   <!-- เมนู Create Room และ Find Room -->
   <div class="menu" style="display:none;">
+    <p id="greeting"></p>
     <a href="/create-room.html">Create Room</a>
     <a href="/find-room.html">Find Room</a>
   </div>
 
   <script>
-    const storedPlayerName = localStorage.getItem('playerName'); // ดึงชื่อผู้เล่นจาก Local Storage
+    // ดึงข้อมูลผู้เล่นจาก Local Storage
+    const storedPlayerName = localStorage.getItem('playerName');
     const playerForm = document.getElementById('playerForm');
     const menu = document.querySelector('.menu');
+    const greeting = document.getElementById('greeting');
 
     if (storedPlayerName) {
-      // ถ้ามีชื่อผู้เล่นแล้ว ซ่อนฟอร์มและแสดงเมนู
-      playerForm.style.display = 'none';
-      menu.style.display = 'block';
+      // ถ้ามีชื่อผู้เล่นแล้ว
+      greeting.textContent = `Hello, ${storedPlayerName}!`;
+      playerForm.style.display = 'none'; // ซ่อนฟอร์ม
+      menu.style.display = 'block'; // แสดงเมนู
     }
 
     // เมื่อผู้เล่นกรอกชื่อ
@@ -38,10 +42,11 @@
       e.preventDefault();
       const playerName = document.getElementById('playerName').value.trim();
       if (playerName) {
-        // บันทึกชื่อผู้เล่นลง Local Storage
+        // เก็บชื่อผู้เล่นใน Local Storage
         localStorage.setItem('playerName', playerName);
-        playerForm.style.display = 'none';
-        menu.style.display = 'block';
+        greeting.textContent = `Hello, ${playerName}!`;
+        playerForm.style.display = 'none'; // ซ่อนฟอร์ม
+        menu.style.display = 'block'; // แสดงเมนู
       } else {
         alert('Please enter your name!');
       }
