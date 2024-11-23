@@ -3,10 +3,12 @@ body {
   text-align: center;
   padding: 20px;
 }
+
 h1 {
   font-size: 2em;
   margin-bottom: 20px;
 }
+
 .menu a {
   display: inline-block;
   margin: 10px;
@@ -17,6 +19,42 @@ h1 {
   color: white;
   border-radius: 5px;
 }
+
 .menu a:hover {
+  background-color: #45a049;
+}
+
+/* เพิ่มสไตล์สำหรับฟอร์ม */
+form#playerForm {
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
+form#playerForm label {
+  display: block;
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+
+form#playerForm input {
+  width: 80%;
+  padding: 10px;
+  font-size: 1em;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+form#playerForm button {
+  padding: 10px 20px;
+  font-size: 1em;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+form#playerForm button:hover {
   background-color: #45a049;
 }
