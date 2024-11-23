@@ -16,9 +16,11 @@
   <script>
     // ตรวจสอบว่ามีชื่อผู้เล่นหรือยัง
     const playerName = localStorage.getItem('playerName');
-  if (!playerName) {
-    window.location.href = 'player-name.html'; // ส่งไปหน้า "ตั้งชื่อผู้เล่น"
-  }
+
+    if (!playerName) {
+      console.log('Player name not found. Redirecting to player-name.html...');
+      window.location.href = '/player-name.html'; // ใช้ path แบบ absolute เพื่อความชัดเจน
+    }
   </script>
 </body>
 </html>
