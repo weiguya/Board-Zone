@@ -1,4 +1,25 @@
-let rooms = {}; // เก็บข้อมูลห้อง
+const express = require('express');
+const path = require('path');
+const http = require('http');
+const { Server } = require('socket.io');
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+
+// ใช้พอร์ตจาก Render หรือ Local
+const PORT = process.env.PORT || 3000;
+
+// เสิร์ฟไฟล์ static จากโฟลเดอร์ public
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Route สำหรับหน้าแรก
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// เก็บข้อมูลห้อง
+let rooms = {};
 
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
@@ -76,4 +97,9 @@ io.on('connection', (socket) => {
     });
     io.emit('rooms updated', rooms);
   });
+});
+
+// เริ่มเซิร์ฟเวอร์
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
