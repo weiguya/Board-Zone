@@ -9,7 +9,6 @@
 <body>
   <h1>Waiting Room</h1>
   <h2 id="roomName"></h2>
-  <p id="statusMessage"></p>
   
   <h3>Players</h3>
   <ul id="playerList"></ul>
@@ -27,61 +26,48 @@
   <script>
     const socket = io();
 
-    // ดึงข้อมูลจาก Local Storage
+    // ดึงข้อมูลห้องจาก Local Storage
     const roomName = localStorage.getItem('roomName');
     const playerName = localStorage.getItem('playerName');
 
     if (!roomName || !playerName) {
-      alert('Room or player information is missing!');
-      window.location.href = '/'; // กลับไปหน้าแรก
+      alert('Missing room or player information!');
+      window.location.href = '/';
     }
 
-    // แสดงชื่อห้อง
     document.getElementById('roomName').textContent = `Room: ${roomName}`;
-
-    // ส่งคำขอเข้าห้องไปยังเซิร์ฟเวอร์
     socket.emit('request join', { roomName, playerName });
 
-    // ฟังการอัปเดตรายชื่อผู้เล่นในห้อง
     socket.on('room updated', ({ players, messages }) => {
       const playerList = document.getElementById('playerList');
-      playerList.innerHTML = ''; // ล้างรายชื่อเดิม
-
+      playerList.innerHTML = '';
       players.forEach((player) => {
         const li = document.createElement('li');
         li.textContent = player.name;
         playerList.appendChild(li);
       });
 
-      // อัปเดตปุ่ม "Start Game"
-      const startGameButton = document.getElementById('startGameButton');
-      if (players.length >= 2) {
-        startGameButton.disabled = false;
-      } else {
-        startGameButton.disabled = true;
-      }
-
-      // แสดงข้อความแชทที่มีอยู่ก่อนหน้า
       const chatMessages = document.getElementById('chatMessages');
-      chatMessages.innerHTML = ''; // ล้างข้อความเดิม
+      chatMessages.innerHTML = '';
       messages.forEach(({ playerName, message }) => {
         const li = document.createElement('li');
         li.textContent = `${playerName}: ${message}`;
         chatMessages.appendChild(li);
       });
+
+      const startGameButton = document.getElementById('startGameButton');
+      startGameButton.disabled = players.length < 2;
     });
 
-    // เมื่อผู้ใช้ส่งข้อความแชท
     document.getElementById('chatForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const chatInput = document.getElementById('chatInput').value;
       if (chatInput) {
         socket.emit('chat message', { roomName, playerName, message: chatInput });
-        document.getElementById('chatInput').value = ''; // เคลียร์ช่องข้อความ
+        document.getElementById('chatInput').value = '';
       }
     });
 
-    // ฟังข้อความแชทใหม่
     socket.on('chat message', ({ playerName, message }) => {
       const chatMessages = document.getElementById('chatMessages');
       const li = document.createElement('li');
@@ -89,20 +75,12 @@
       chatMessages.appendChild(li);
     });
 
-    // เมื่อกดปุ่ม "Start Game"
     document.getElementById('startGameButton').addEventListener('click', () => {
       socket.emit('start game', { roomName });
     });
 
-    // เมื่อเกมเริ่ม
     socket.on('game started', ({ game }) => {
       alert(`Game Started: ${game}`);
-      // เปลี่ยนไปยังหน้าเกมจริงได้ที่นี่
-    });
-
-    // ฟังข้อผิดพลาด
-    socket.on('error', ({ message }) => {
-      alert(message);
     });
   </script>
 </body>
