@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>รอเพื่อนเข้าห้อง</title>
+</head>
+<body>
+  <h1>ห้อง: <span id="roomName">...</span></h1>
+  <p>เกมที่เลือก: <span id="gameName">...</span></p>
+  <p>ผู้เล่นในห้อง:</p>
+  <ul id="playersList"></ul>
+  <p>สถานะ: <span id="roomStatus">0/0 คน</span></p>
+
+  <button id="startGame" disabled>เริ่มเกม</button>
+
+  <div class="chat-box">
+    <ul id="chatMessages"></ul>
+  </div>
+  <input type="text" id="chatInput" placeholder="พิมพ์ข้อความ..." />
+  <button id="sendChat">ส่ง</button>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    const roomName = localStorage.getItem('roomName');
+    const maxPlayers = localStorage.getItem('maxPlayers');
+    const gameName = localStorage.getItem('gameName') || '...';
+
+    document.getElementById('roomName').textContent = roomName;
+    document.getElementById('gameName').textContent = gameName;
+
+    socket.emit('join room', { roomName });
+
+    // อัปเดตรายชื่อผู้เล่น
+    socket.on('room updated', ({ players }) => {
+      const playersList = document.getElementById('playersList');
+      playersList.innerHTML = '';
+      players.forEach(player => {
+        const li = document.createElement('li');
+        li.textContent = player.name;
+        playersList.appendChild(li);
+      });
+
+      document.getElementById('roomStatus').textContent = `${players.length}/${maxPlayers} คน`;
+      document.getElementById('startGame').disabled = players.length < maxPlayers;
+    });
+
+    // เริ่มเกม
+    document.getElementById('startGame').addEventListener('click', () => {
+      socket.emit('start game', { roomName });
+    });
+
+    // แชท
+    document.getElementById('sendChat').addEventListener('click', () => {
+      const message = document.getElementById('chatInput').value;
+      socket.emit('chat message', { roomName, message });
+      document.getElementById('chatInput').value = '';
+    });
+
+    socket.on('chat message', (data) => {
+      const li = document.createElement('li');
+      li.textContent = data.message;
+      document.getElementById('chatMessages').appendChild(li);
+    });
+  </script>
+</body>
+</html>
