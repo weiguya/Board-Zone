@@ -9,13 +9,15 @@
 <body>
   <h1>Welcome to BoardZone</h1>
 
+  <!-- แบบฟอร์มกรอกชื่อผู้เล่น -->
   <form id="playerForm">
     <label for="playerName">Enter your name:</label>
     <input type="text" id="playerName" placeholder="Your name" required />
     <button type="submit">Submit</button>
   </form>
 
-  <div class="menu" style="display:none;">
+  <!-- เมนู -->
+  <div class="menu" style="display: none;">
     <a href="/create-room.html">Create Room</a>
     <a href="/find-room.html">Find Room</a>
   </div>
@@ -26,6 +28,7 @@
     const playerForm = document.getElementById('playerForm');
     const menu = document.querySelector('.menu');
 
+    // ถ้ามีชื่อใน Local Storage ให้แสดงเมนู
     if (storedPlayerName) {
       playerForm.style.display = 'none';
       menu.style.display = 'block';
@@ -35,8 +38,12 @@
     playerForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const playerName = document.getElementById('playerName').value.trim();
+
       if (playerName) {
+        // บันทึกชื่อใน Local Storage
         localStorage.setItem('playerName', playerName);
+
+        // ซ่อนแบบฟอร์มและแสดงเมนู
         playerForm.style.display = 'none';
         menu.style.display = 'block';
       } else {
