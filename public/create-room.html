@@ -7,22 +7,22 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
       text-align: center;
+      padding: 20px;
     }
     form {
       display: inline-block;
       text-align: left;
+      width: 300px;
     }
     label {
-      display: block;
       margin: 10px 0 5px;
+      display: block;
     }
     input, select, button {
       width: 100%;
       padding: 10px;
       margin-bottom: 10px;
-      font-size: 1em;
     }
   </style>
 </head>
@@ -51,11 +51,13 @@
 
     document.getElementById('createRoomForm').addEventListener('submit', (e) => {
       e.preventDefault();
-      const roomName = document.getElementById('roomName').value;
-      const game = document.getElementById('game').value;
-      const maxPlayers = document.getElementById('maxPlayers').value;
 
-      if (roomName && game && maxPlayers) {
+      const roomName = document.getElementById('roomName').value.trim();
+      const game = document.getElementById('game').value;
+      const maxPlayers = parseInt(document.getElementById('maxPlayers').value);
+
+      if (roomName && game && maxPlayers > 1) {
+        // ส่งข้อมูลไปยังเซิร์ฟเวอร์
         socket.emit('create room', { roomName, game, maxPlayers });
 
         // เก็บข้อมูลห้องใน Local Storage
@@ -64,7 +66,9 @@
         localStorage.setItem('maxPlayers', maxPlayers);
 
         // พาไปยังหน้ารอเพื่อนในห้อง
-        window.location.href = 'waiting-room.html';
+        window.location.href = '/waiting-room.html';
+      } else {
+        alert('กรุณากรอกข้อมูลให้ครบถ้วน');
       }
     });
   </script>
