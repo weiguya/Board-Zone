@@ -3,37 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BoardZone - Welcome</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 50px;
-    }
-    input, button {
-      margin: 10px;
-      padding: 10px;
-      font-size: 1rem;
-    }
-  </style>
+  <title>BoardZone</title>
+  <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
   <h1>Welcome to BoardZone</h1>
-  <form id="startForm">
-    <input type="text" id="username" placeholder="Enter your name" required>
-    <button type="submit">Enter Game</button>
-  </form>
-  <script>
-    document.getElementById('startForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const username = document.getElementById('username').value;
-      if (username) {
-        localStorage.setItem('username', username);
-        window.location.href = 'select.html';
-      } else {
-        alert('Please enter your name!');
-      }
-    });
-  </script>
+  <div class="menu">
+    <a href="/create-room.html">Create Room</a>
+    <a href="/find-room.html">Find Room</a>
+  </div>
 </body>
 </html>
