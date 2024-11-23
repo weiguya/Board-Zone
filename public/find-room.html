@@ -3,29 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ค้นหาห้อง</title>
+  <title>Find Room</title>
+  <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-  <h1>ค้นหาห้อง</h1>
+  <h1>Available Rooms</h1>
   <ul id="roomList"></ul>
 
   <script src="/socket.io/socket.io.js"></script>
-  <script>
-    const socket = io();
-    const roomList = document.getElementById('roomList');
-
-    // รับรายการห้องจากเซิร์ฟเวอร์
-    socket.on('rooms updated', (rooms) => {
-      roomList.innerHTML = '';
-      Object.keys(rooms).forEach((roomName) => {
-        const li = document.createElement('li');
-        li.textContent = roomName;
-        roomList.appendChild(li);
-      });
-    });
-
-    // ขอข้อมูลห้องจากเซิร์ฟเวอร์
-    socket.emit('get rooms');
-  </script>
+  <script src="/js/main.js"></script>
 </body>
 </html>
