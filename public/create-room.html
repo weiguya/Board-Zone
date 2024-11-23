@@ -8,13 +8,13 @@
 </head>
 <body>
   <div class="container">
-    <h1>Create a New Room</h1>
+    <h1>Create a Room</h1>
     <form id="createRoomForm">
       <label for="roomName">Room Name:</label>
       <input type="text" id="roomName" placeholder="Enter room name" required>
-
+      
       <label for="game">Choose Game:</label>
-      <select id="game">
+      <select id="game" required>
         <option value="Who Am I">Who Am I</option>
         <option value="Insider">Insider</option>
         <option value="Forbidden Words">Forbidden Words</option>
@@ -26,5 +26,21 @@
       <button type="submit">Create Room</button>
     </form>
   </div>
+
+  <script>
+    document.getElementById('createRoomForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const roomName = document.getElementById('roomName').value.trim();
+      const game = document.getElementById('game').value;
+      const maxPlayers = document.getElementById('maxPlayers').value;
+
+      if (roomName && game && maxPlayers) {
+        alert(`Room "${roomName}" created with game "${game}" and max players ${maxPlayers}`);
+        // Logic to create room
+      } else {
+        alert('Please fill in all fields!');
+      }
+    });
+  </script>
 </body>
 </html>
