@@ -11,6 +11,42 @@
   <ul id="roomList"></ul>
 
   <script src="/socket.io/socket.io.js"></script>
-  <script src="/js/main.js"></script>
+  <script>
+    const socket = io();
+
+    // ขอรายชื่อห้องจากเซิร์ฟเวอร์
+    socket.emit('get rooms');
+
+    // รับข้อมูลรายชื่อห้องจากเซิร์ฟเวอร์
+    socket.on('rooms list', ({ rooms }) => {
+      const roomList = document.getElementById('roomList');
+      roomList.innerHTML = ''; // ล้างข้อมูลเดิมก่อน
+
+      if (rooms.length === 0) {
+        roomList.innerHTML = '<li>No rooms available</li>';
+      } else {
+        rooms.forEach((roomName) => {
+          const li = document.createElement('li');
+          li.textContent = roomName;
+
+          const joinButton = document.createElement('button');
+          joinButton.textContent = 'Join Room';
+          joinButton.onclick = () => {
+            // เก็บชื่อห้องใน Local Storage และไปที่หน้า Waiting Room
+            localStorage.setItem('roomName', roomName);
+            window.location.href = 'waiting-room.html';
+          };
+
+          li.appendChild(joinButton);
+          roomList.appendChild(li);
+        });
+      }
+    });
+
+    // กรณีเกิดข้อผิดพลาด
+    socket.on('error', ({ message }) => {
+      alert(message);
+    });
+  </script>
 </body>
 </html>
