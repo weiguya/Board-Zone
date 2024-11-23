@@ -3,29 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create Room</title>
+  <title>Create a Room</title>
   <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
   <div class="container">
-    <h1>Create a Room</h1>
+    <h1>Create a New Room</h1>
     <form id="createRoomForm">
-      <input type="text" id="roomName" placeholder="Room Name" required>
+      <label for="roomName">Room Name:</label>
+      <input type="text" id="roomName" placeholder="Enter room name" required>
+
+      <label for="game">Choose Game:</label>
       <select id="game">
         <option value="Who Am I">Who Am I</option>
         <option value="Insider">Insider</option>
         <option value="Forbidden Words">Forbidden Words</option>
       </select>
-      <input type="number" id="maxPlayers" min="2" max="10" placeholder="Max Players" required>
-      <button type="submit">Create</button>
+
+      <label for="maxPlayers">Number of Players:</label>
+      <input type="number" id="maxPlayers" min="2" max="10" value="5" required>
+
+      <button type="submit">Create Room</button>
     </form>
   </div>
-  <script>
-    document.getElementById('createRoomForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      alert('Room Created! (Add server connection here.)');
-      window.location.href = '/waiting-room.html';
-    });
-  </script>
 </body>
 </html>
