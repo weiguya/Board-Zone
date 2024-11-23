@@ -3,38 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BoardZone - Find Room</title>
+  <title>ค้นหาห้อง</title>
 </head>
 <body>
-  <h1>ค้นหาห้องที่มีอยู่</h1>
+  <h1>ค้นหาห้อง</h1>
   <ul id="roomList"></ul>
+
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
+    const roomList = document.getElementById('roomList');
 
-    // แสดงรายการห้อง
+    // รับรายการห้องจากเซิร์ฟเวอร์
     socket.on('rooms updated', (rooms) => {
-      const roomList = document.getElementById('roomList');
       roomList.innerHTML = '';
-      for (const roomName in rooms) {
+      Object.keys(rooms).forEach((roomName) => {
         const li = document.createElement('li');
-        li.textContent = `${roomName} (${rooms[roomName].players.length}/${rooms[roomName].maxPlayers})`;
-        li.onclick = () => requestJoin(roomName);
+        li.textContent = roomName;
         roomList.appendChild(li);
-      }
+      });
     });
 
-    // ขอเข้าร่วมห้อง
-    function requestJoin(roomName) {
-      socket.emit('request join', { roomName });
-    }
-
-    // แจ้งเตือนผลการเข้าห้อง
-    socket.on('join approved', (data) => {
-      alert(`เข้าห้อง ${data.roomName} สำเร็จ!`);
-      window.location.href = 'prepare.html';
-    });
-    socket.on('join denied', () => alert('คำขอเข้าห้องถูกปฏิเสธ'));
+    // ขอข้อมูลห้องจากเซิร์ฟเวอร์
+    socket.emit('get rooms');
   </script>
 </body>
 </html>
