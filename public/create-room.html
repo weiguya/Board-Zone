@@ -4,22 +4,43 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>สร้างห้อง</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      text-align: center;
+    }
+    form {
+      display: inline-block;
+      text-align: left;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      font-size: 1em;
+    }
+  </style>
 </head>
 <body>
   <h1>สร้างห้องใหม่</h1>
   <form id="createRoomForm">
     <label for="roomName">ชื่อห้อง:</label>
-    <input type="text" id="roomName" placeholder="กรอกชื่อห้อง" required /><br/><br/>
-
-    <label for="maxPlayers">จำนวนผู้เล่น:</label>
-    <input type="number" id="maxPlayers" min="2" max="10" value="5" required /><br/><br/>
+    <input type="text" id="roomName" placeholder="กรอกชื่อห้อง" required />
 
     <label for="game">เลือกเกม:</label>
     <select id="game">
       <option value="Who Am I">Who Am I</option>
       <option value="Insider">Insider</option>
       <option value="คำต้องห้าม">คำต้องห้าม</option>
-    </select><br/><br/>
+    </select>
+
+    <label for="maxPlayers">จำนวนผู้เล่น:</label>
+    <input type="number" id="maxPlayers" min="2" max="10" value="5" required />
 
     <button type="submit">ยืนยัน</button>
   </form>
@@ -31,17 +52,20 @@
     document.getElementById('createRoomForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const roomName = document.getElementById('roomName').value;
-      const maxPlayers = document.getElementById('maxPlayers').value;
       const game = document.getElementById('game').value;
+      const maxPlayers = document.getElementById('maxPlayers').value;
 
-      socket.emit('create room', { roomName, maxPlayers, game });
+      if (roomName && game && maxPlayers) {
+        socket.emit('create room', { roomName, game, maxPlayers });
 
-      // เก็บข้อมูลใน localStorage
-      localStorage.setItem('roomName', roomName);
-      localStorage.setItem('maxPlayers', maxPlayers);
+        // เก็บข้อมูลห้องใน Local Storage
+        localStorage.setItem('roomName', roomName);
+        localStorage.setItem('game', game);
+        localStorage.setItem('maxPlayers', maxPlayers);
 
-      // เปลี่ยนไปหน้ารอเพื่อน
-      window.location.href = 'waiting-room.html';
+        // พาไปยังหน้ารอเพื่อนในห้อง
+        window.location.href = 'waiting-room.html';
+      }
     });
   </script>
 </body>
