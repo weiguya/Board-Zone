@@ -11,6 +11,7 @@
   <h2 id="roomName"></h2>
   <p id="statusMessage"></p>
   
+  <h3>Players</h3>
   <ul id="playerList"></ul>
   
   <h3>Chat</h3>
@@ -26,22 +27,22 @@
   <script>
     const socket = io();
 
-    // ดึงข้อมูลชื่อห้องและผู้เล่นจาก Local Storage
+    // ดึงข้อมูลจาก Local Storage
     const roomName = localStorage.getItem('roomName');
     const playerName = localStorage.getItem('playerName');
 
     if (!roomName || !playerName) {
-      alert('Room or player information missing!');
-      window.location.href = '/';
+      alert('Room or player information is missing!');
+      window.location.href = '/'; // กลับไปหน้าแรก
     }
 
-    // ตั้งชื่อห้องบนหน้าจอ
+    // แสดงชื่อห้อง
     document.getElementById('roomName').textContent = `Room: ${roomName}`;
 
     // ส่งคำขอเข้าห้องไปยังเซิร์ฟเวอร์
     socket.emit('request join', { roomName, playerName });
 
-    // อัปเดตรายชื่อผู้เล่นในห้อง
+    // ฟังการอัปเดตรายชื่อผู้เล่นในห้อง
     socket.on('room updated', ({ players, messages }) => {
       const playerList = document.getElementById('playerList');
       playerList.innerHTML = ''; // ล้างรายชื่อเดิม
@@ -52,7 +53,7 @@
         playerList.appendChild(li);
       });
 
-      // อัปเดตปุ่ม "Start Game" ถ้าผู้เล่นครบแล้ว
+      // อัปเดตปุ่ม "Start Game"
       const startGameButton = document.getElementById('startGameButton');
       if (players.length >= 2) {
         startGameButton.disabled = false;
@@ -62,7 +63,7 @@
 
       // แสดงข้อความแชทที่มีอยู่ก่อนหน้า
       const chatMessages = document.getElementById('chatMessages');
-      chatMessages.innerHTML = '';
+      chatMessages.innerHTML = ''; // ล้างข้อความเดิม
       messages.forEach(({ playerName, message }) => {
         const li = document.createElement('li');
         li.textContent = `${playerName}: ${message}`;
@@ -74,11 +75,13 @@
     document.getElementById('chatForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const chatInput = document.getElementById('chatInput').value;
-      socket.emit('chat message', { roomName, playerName, message: chatInput });
-      document.getElementById('chatInput').value = '';
+      if (chatInput) {
+        socket.emit('chat message', { roomName, playerName, message: chatInput });
+        document.getElementById('chatInput').value = ''; // เคลียร์ช่องข้อความ
+      }
     });
 
-    // รับข้อความแชทใหม่จากเซิร์ฟเวอร์
+    // ฟังข้อความแชทใหม่
     socket.on('chat message', ({ playerName, message }) => {
       const chatMessages = document.getElementById('chatMessages');
       const li = document.createElement('li');
@@ -94,10 +97,10 @@
     // เมื่อเกมเริ่ม
     socket.on('game started', ({ game }) => {
       alert(`Game Started: ${game}`);
-      // คุณสามารถเปลี่ยนไปยังหน้าเกมจริงได้ที่นี่
+      // เปลี่ยนไปยังหน้าเกมจริงได้ที่นี่
     });
 
-    // กรณีเกิดข้อผิดพลาด
+    // ฟังข้อผิดพลาด
     socket.on('error', ({ message }) => {
       alert(message);
     });
