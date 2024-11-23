@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Set Player Name</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <h1>Enter Your Name</h1>
+  <form id="nameForm">
+    <label for="playerName">Your Name:</label>
+    <input type="text" id="playerName" placeholder="Enter your name" required>
+    <button type="submit">Continue</button>
+  </form>
+
+  <script>
+    document.getElementById('nameForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const playerName = document.getElementById('playerName').value;
+
+      if (playerName) {
+        // เก็บชื่อผู้เล่นใน Local Storage
+        localStorage.setItem('playerName', playerName);
+
+        // พาไปหน้า Welcome
+        window.location.href = 'index.html';
+      } else {
+        alert('Please enter your name.');
+      }
+    });
+  </script>
+</body>
+</html>
