@@ -30,7 +30,7 @@ io.on('connection', (socket) => {
       };
       socket.join(roomName);
       console.log(`Room created: ${roomName}, Game: ${game}, Max Players: ${maxPlayers}`);
-      io.emit('rooms updated', { rooms: Object.keys(rooms) }); // ส่งข้อมูลห้องทั้งหมดให้ทุกคน
+      io.emit('rooms updated', { rooms: Object.keys(rooms) }); // อัปเดตรายชื่อห้องทั้งหมด
     }
   });
 
@@ -42,8 +42,13 @@ io.on('connection', (socket) => {
   // เมื่อผู้ใช้ขอเข้าร่วมห้อง
   socket.on('request join', ({ roomName, playerName }) => {
     if (rooms[roomName]) {
-      rooms[roomName].players.push({ id: socket.id, name: playerName });
+      const isPlayerExists = rooms[roomName].players.some((player) => player.id === socket.id);
+
+      if (!isPlayerExists) {
+        rooms[roomName].players.push({ id: socket.id, name: playerName });
+      }
       socket.join(roomName);
+
       io.to(roomName).emit('room updated', {
         players: rooms[roomName].players,
         messages: rooms[roomName].messages,
