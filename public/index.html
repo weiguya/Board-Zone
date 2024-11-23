@@ -9,46 +9,25 @@
 <body>
   <div class="container">
     <h1>Welcome to BoardZone</h1>
-
-    <!-- ฟอร์มสำหรับกรอกชื่อผู้เล่น -->
     <form id="playerForm">
       <label for="playerName">Enter your name:</label>
-      <input type="text" id="playerName" placeholder="Your name" required>
+      <input type="text" id="playerName" placeholder="Your name" required />
       <button type="submit">Enter Game</button>
     </form>
-
-    <!-- เมนู Create Room และ Find Room -->
-    <div class="menu" style="display:none;">
-      <p id="greeting"></p>
-      <a href="/select-mode.html">Continue</a>
-    </div>
   </div>
 
   <script>
-    const storedPlayerName = localStorage.getItem('playerName');
     const playerForm = document.getElementById('playerForm');
-    const menu = document.querySelector('.menu');
-    const greeting = document.getElementById('greeting');
-
-    // แสดงฟอร์มหรือเมนูตามสถานะของ Local Storage
-    if (storedPlayerName) {
-      playerForm.style.display = 'none';
-      menu.style.display = 'block';
-      greeting.textContent = `Welcome back, ${storedPlayerName}!`;
-    }
 
     // เมื่อผู้เล่นกรอกชื่อ
     playerForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const playerName = document.getElementById('playerName').value.trim();
       if (playerName) {
-        // บันทึกชื่อผู้เล่นใน Local Storage
-        localStorage.setItem('playerName', playerName);
-        playerForm.style.display = 'none';
-        menu.style.display = 'block';
-        greeting.textContent = `Hello, ${playerName}!`;
+        localStorage.setItem('playerName', playerName); // เก็บชื่อผู้เล่นใน Local Storage
+        window.location.href = 'select-mode.html'; // ไปยังหน้าเลือกโหมด
       } else {
-        alert('Please enter your name!');
+        alert('Please enter your name!'); // แจ้งเตือนถ้าไม่กรอกชื่อ
       }
     });
   </script>
