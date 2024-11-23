@@ -17,18 +17,34 @@ let rooms = {};
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
+  // ตรวจสอบว่าเซิร์ฟเวอร์ได้รับชื่อผู้เล่นหรือยัง
+  socket.on('set player name', ({ playerName }) => {
+    if (playerName && playerName.trim()) {
+      socket.data.playerName = playerName.trim(); // เก็บชื่อผู้เล่นไว้ใน data ของ socket
+      console.log(`Player set name: ${playerName}`);
+    } else {
+      socket.emit('error', { message: 'Invalid player name' });
+    }
+  });
+
   // สร้างห้อง
   socket.on('create room', ({ roomName, game, maxPlayers }) => {
+    if (!socket.data.playerName) {
+      socket.emit('error', { message: 'You must set a player name first.' });
+      return;
+    }
+
     if (rooms[roomName]) {
-      socket.emit('error', { message: 'ห้องนี้มีอยู่แล้ว' });
+      socket.emit('error', { message: 'Room already exists' });
     } else {
       rooms[roomName] = {
         game,
         maxPlayers,
-        players: [{ id: socket.id, name: 'เจ้าของห้อง' }],
+        players: [{ id: socket.id, name: socket.data.playerName }],
         messages: [],
       };
       socket.join(roomName);
+      console.log(`Room created: ${roomName} by ${socket.data.playerName}`);
       io.emit('rooms updated', { rooms: Object.keys(rooms) });
     }
   });
@@ -39,28 +55,41 @@ io.on('connection', (socket) => {
   });
 
   // ขอเข้าร่วมห้อง
-  socket.on('request join', ({ roomName, playerName }) => {
+  socket.on('request join', ({ roomName }) => {
+    if (!socket.data.playerName) {
+      socket.emit('error', { message: 'You must set a player name first.' });
+      return;
+    }
+
     if (rooms[roomName]) {
       const room = rooms[roomName];
       if (!room.players.some((player) => player.id === socket.id)) {
-        room.players.push({ id: socket.id, name: playerName });
+        room.players.push({ id: socket.id, name: socket.data.playerName });
         socket.join(roomName);
+        console.log(`${socket.data.playerName} joined room: ${roomName}`);
         io.to(roomName).emit('room updated', {
           players: room.players,
           messages: room.messages,
         });
       }
     } else {
-      socket.emit('error', { message: 'ห้องนี้ไม่มีอยู่ในระบบ' });
+      socket.emit('error', { message: 'Room does not exist' });
     }
   });
 
   // ส่งข้อความในแชท
-  socket.on('chat message', ({ roomName, playerName, message }) => {
+  socket.on('chat message', ({ roomName, message }) => {
+    if (!socket.data.playerName) {
+      socket.emit('error', { message: 'You must set a player name first.' });
+      return;
+    }
+
     if (rooms[roomName]) {
-      const chatMessage = { playerName, message };
+      const chatMessage = { playerName: socket.data.playerName, message };
       rooms[roomName].messages.push(chatMessage);
       io.to(roomName).emit('chat message', chatMessage);
+    } else {
+      socket.emit('error', { message: 'Room does not exist' });
     }
   });
 
@@ -68,6 +97,7 @@ io.on('connection', (socket) => {
   socket.on('start game', ({ roomName }) => {
     if (rooms[roomName]) {
       io.to(roomName).emit('game started', { game: rooms[roomName].game });
+      console.log(`Game started in room: ${roomName}`);
     }
   });
 
@@ -79,6 +109,7 @@ io.on('connection', (socket) => {
       room.players = room.players.filter((player) => player.id !== socket.id);
       if (room.players.length === 0) {
         delete rooms[roomName];
+        console.log(`Room deleted: ${roomName}`);
       } else {
         io.to(roomName).emit('room updated', {
           players: room.players,
