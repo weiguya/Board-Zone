@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>สร้างห้อง</title>
+</head>
+<body>
+  <h1>สร้างห้อง</h1>
+  <form id="createRoomForm">
+    <input type="text" id="roomName" placeholder="กรอกชื่อห้อง" required />
+    <button type="submit">สร้างห้อง</button>
+  </form>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    document.getElementById('createRoomForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const roomName = document.getElementById('roomName').value;
+      socket.emit('create room', { roomName });
+      alert('สร้างห้องสำเร็จ!');
+      window.location.href = 'find-room.html'; // ไปหน้าค้นหาห้อง
+    });
+  </script>
+</body>
+</html>
