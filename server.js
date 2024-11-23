@@ -7,36 +7,21 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-// ใช้พอร์ตจาก Render หรือ Local
 const PORT = process.env.PORT || 3000;
 
 // เสิร์ฟไฟล์ static จากโฟลเดอร์ public
 app.use(express.static(path.join(__dirname, 'public')));
 
-// กำหนด Route สำหรับหน้าแรก (index.html)
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-// กำหนด Route สำหรับหน้าเลือกโหมด (select-mode.html)
-app.get('/select-mode.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'select-mode.html'));
-});
-
-// กำหนด Route สำหรับหน้า Create Room
-app.get('/create-room.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'create-room.html'));
-});
-
-// กำหนด Route สำหรับหน้า Waiting Room
-app.get('/waiting-room.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'waiting-room.html'));
-});
-
 // เก็บข้อมูลห้อง
 let rooms = {};
 
-// ฟังก์ชันการจัดการ Socket.IO
+// กำหนด Route สำหรับหน้าแรกและหน้าอื่นๆ
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
+app.get('/select-mode.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'select-mode.html')));
+app.get('/create-room.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'create-room.html')));
+app.get('/waiting-room.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'waiting-room.html')));
+
+// Socket.IO ฟังก์ชันจัดการ
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
@@ -52,7 +37,7 @@ io.on('connection', (socket) => {
         messages: [],
       };
       socket.join(roomName);
-      console.log(`Room created: ${roomName}, Game: ${game}, Max Players: ${maxPlayers}`);
+      console.log(`Room created: ${roomName}`);
       io.emit('rooms updated', { rooms: Object.keys(rooms) });
     }
   });
@@ -65,10 +50,7 @@ io.on('connection', (socket) => {
         room.players.push({ id: socket.id, name: playerName });
         socket.join(roomName);
         console.log(`${playerName} joined room: ${roomName}`);
-        io.to(roomName).emit('room updated', {
-          players: room.players,
-          messages: room.messages,
-        });
+        io.to(roomName).emit('room updated', { players: room.players, messages: room.messages });
       }
     } else {
       socket.emit('error', { message: 'Room does not exist' });
@@ -84,7 +66,7 @@ io.on('connection', (socket) => {
     }
   });
 
-  // จัดการเมื่อผู้ใช้ตัดการเชื่อมต่อ
+  // จัดการการตัดการเชื่อมต่อ
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
     Object.keys(rooms).forEach((roomName) => {
@@ -94,10 +76,7 @@ io.on('connection', (socket) => {
         delete rooms[roomName];
         console.log(`Room deleted: ${roomName}`);
       } else {
-        io.to(roomName).emit('room updated', {
-          players: room.players,
-          messages: room.messages,
-        });
+        io.to(roomName).emit('room updated', { players: room.players, messages: room.messages });
       }
     });
     io.emit('rooms updated', { rooms: Object.keys(rooms) });
