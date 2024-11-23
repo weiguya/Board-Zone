@@ -1,19 +1,65 @@
-document.getElementById('createRoomForm').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const roomName = document.getElementById('roomName').value.trim();
-  const game = document.getElementById('game').value;
-  const maxPlayers = document.getElementById('maxPlayers').value;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create a Room</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Create a Room</h1>
+    <form id="createRoomForm">
+      <label for="roomName">Room Name:</label>
+      <input type="text" id="roomName" placeholder="Enter room name" required>
+      
+      <label for="game">Choose Game:</label>
+      <select id="game" required>
+        <option value="Who Am I">Who Am I</option>
+        <option value="Insider">Insider</option>
+        <option value="Forbidden Words">Forbidden Words</option>
+      </select>
 
-  if (roomName && game && maxPlayers) {
-    // เก็บข้อมูลใน Local Storage
-    localStorage.setItem('roomName', roomName);
+      <label for="maxPlayers">Number of Players:</label>
+      <input type="number" id="maxPlayers" min="2" max="10" value="5" required>
 
-    // ส่งข้อมูลไปที่เซิร์ฟเวอร์
-    socket.emit('create room', { roomName, game, maxPlayers });
+      <button type="submit">Create Room</button>
+    </form>
+  </div>
 
-    // พาไปหน้า Waiting Room
-    window.location.href = '/waiting-room.html';
-  } else {
-    alert('Please fill in all fields!');
-  }
-});
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    // เช็กการเชื่อมต่อ Socket.IO
+    socket.on('connect', () => {
+      console.log('Connected to Socket.IO server!');
+    });
+
+    socket.on('connect_error', (err) => {
+      console.error('Socket.IO connection error:', err);
+    });
+
+    // ฟังก์ชันจัดการการสร้างห้อง
+    document.getElementById('createRoomForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const roomName = document.getElementById('roomName').value.trim();
+      const game = document.getElementById('game').value;
+      const maxPlayers = document.getElementById('maxPlayers').value;
+
+      if (roomName && game && maxPlayers) {
+        // เก็บข้อมูลใน Local Storage
+        localStorage.setItem('roomName', roomName);
+
+        // ส่งข้อมูลไปที่เซิร์ฟเวอร์
+        socket.emit('create room', { roomName, game, maxPlayers });
+
+        // พาไปหน้า Waiting Room
+        window.location.href = '/waiting-room.html';
+      } else {
+        alert('Please fill in all fields!');
+      }
+    });
+  </script>
+</body>
+</html>
