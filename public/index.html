@@ -17,17 +17,14 @@
   </div>
 
   <script>
-    const playerForm = document.getElementById('playerForm');
-
-    // เมื่อผู้เล่นกรอกชื่อ
-    playerForm.addEventListener('submit', (e) => {
+    document.getElementById('playerForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const playerName = document.getElementById('playerName').value.trim();
       if (playerName) {
-        localStorage.setItem('playerName', playerName); // เก็บชื่อผู้เล่นใน Local Storage
-        window.location.href = 'select-mode.html'; // ไปยังหน้าเลือกโหมด
+        localStorage.setItem('playerName', playerName);
+        window.location.href = 'select-mode.html';
       } else {
-        alert('Please enter your name!'); // แจ้งเตือนถ้าไม่กรอกชื่อ
+        alert('Please enter your name!');
       }
     });
   </script>
