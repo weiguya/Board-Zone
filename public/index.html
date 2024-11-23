@@ -12,5 +12,13 @@
     <a href="/create-room.html">Create Room</a>
     <a href="/find-room.html">Find Room</a>
   </div>
+
+  <script>
+    // ตรวจสอบว่ามีชื่อผู้เล่นหรือยัง
+    const playerName = localStorage.getItem('playerName');
+    if (!playerName) {
+      window.location.href = 'player-name.html'; // ส่งกลับไปหน้า "ตั้งชื่อผู้เล่น"
+    }
+  </script>
 </body>
 </html>
