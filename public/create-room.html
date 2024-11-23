@@ -26,6 +26,32 @@
   </form>
 
   <script src="/socket.io/socket.io.js"></script>
-  <script src="/js/main.js"></script>
+  <script>
+    // ตรวจสอบว่ามีชื่อผู้เล่นหรือยัง
+    const playerName = localStorage.getItem('playerName');
+    if (!playerName) {
+      window.location.href = 'player-name.html'; // ส่งกลับไปหน้า "ตั้งชื่อผู้เล่น"
+    }
+
+    const socket = io();
+
+    document.getElementById('createRoomForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const roomName = document.getElementById('roomName').value;
+      const game = document.getElementById('game').value;
+      const maxPlayers = document.getElementById('maxPlayers').value;
+
+      if (roomName && game && maxPlayers) {
+        // ส่งข้อมูลไปที่เซิร์ฟเวอร์
+        socket.emit('create room', { roomName, game, maxPlayers });
+
+        // เก็บข้อมูลห้องใน Local Storage
+        localStorage.setItem('roomName', roomName);
+
+        // พาไปหน้า Waiting Room
+        window.location.href = 'waiting-room.html';
+      }
+    });
+  </script>
 </body>
 </html>
