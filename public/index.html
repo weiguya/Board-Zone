@@ -8,19 +8,41 @@
 </head>
 <body>
   <h1>Welcome to BoardZone</h1>
-  <div class="menu">
+
+  <form id="playerForm">
+    <label for="playerName">Enter your name:</label>
+    <input type="text" id="playerName" placeholder="Your name" required />
+    <button type="submit">Submit</button>
+  </form>
+
+  <div class="menu" style="display:none;">
     <a href="/create-room.html">Create Room</a>
     <a href="/find-room.html">Find Room</a>
   </div>
 
   <script>
-    // ตรวจสอบว่ามีชื่อผู้เล่นหรือยัง
-    const playerName = localStorage.getItem('playerName');
+    // ตรวจสอบชื่อผู้เล่นใน Local Storage
+    const storedPlayerName = localStorage.getItem('playerName');
+    const playerForm = document.getElementById('playerForm');
+    const menu = document.querySelector('.menu');
 
-    if (!playerName) {
-      console.log('Player name not found. Redirecting to player-name.html...');
-      window.location.href = '/player-name.html'; // ใช้ path แบบ absolute เพื่อความชัดเจน
+    if (storedPlayerName) {
+      playerForm.style.display = 'none';
+      menu.style.display = 'block';
     }
+
+    // เมื่อผู้เล่นกรอกชื่อ
+    playerForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const playerName = document.getElementById('playerName').value.trim();
+      if (playerName) {
+        localStorage.setItem('playerName', playerName);
+        playerForm.style.display = 'none';
+        menu.style.display = 'block';
+      } else {
+        alert('Please enter your name!');
+      }
+    });
   </script>
 </body>
 </html>
