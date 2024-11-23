@@ -1,18 +1,22 @@
 body {
   font-family: Arial, sans-serif;
   text-align: center;
-  margin: 0;
   padding: 20px;
 }
 h1 {
-  color: #333;
+  font-size: 2em;
+  margin-bottom: 20px;
 }
-button {
-  padding: 10px 20px;
+.menu a {
+  display: inline-block;
   margin: 10px;
-  background-color: #007BFF;
+  padding: 10px 20px;
+  font-size: 1.2em;
+  text-decoration: none;
+  background-color: #4CAF50;
   color: white;
-  border: none;
   border-radius: 5px;
-  cursor: pointer;
+}
+.menu a:hover {
+  background-color: #45a049;
 }
