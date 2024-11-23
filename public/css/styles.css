@@ -1,84 +1,76 @@
+/* styles.css */
+
+/* Reset & Base */
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Nunito', sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f0f8ff;
+  background-color: #f3f4f6;
+  color: #333;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  height: 100vh;
 }
 
 .container {
   text-align: center;
   background: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   padding: 30px;
-  width: 350px;
-  max-width: 90%;
+  width: 100%;
+  max-width: 400px;
+}
+
+h1, h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #2c3e50;
 }
 
 h1 {
-  font-size: 2em;
   margin-bottom: 20px;
-  color: #333;
 }
 
-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-input[type="text"] {
+button, input, select {
   width: 100%;
-  padding: 12px;
-  margin: 15px 0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1em;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px 15px;
+  margin: 10px 0;
+  font-size: 1rem;
+  border: none;
+  border-radius: 10px;
+  outline: none;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
 }
 
 button {
-  background-color: #4CAF50;
+  background: #4CAF50;
   color: white;
-  border: none;
-  padding: 12px 20px;
-  text-transform: uppercase;
-  border-radius: 5px;
   cursor: pointer;
-  font-size: 1em;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s;
 }
 
 button:hover {
-  background-color: #45a049;
+  background: #45a049;
 }
 
-.menu {
-  margin-top: 20px;
+input, select {
+  background: #f9f9f9;
+  border: 1px solid #ccc;
 }
 
-.menu a {
-  display: inline-block;
-  margin: 10px;
-  padding: 12px 20px;
+a {
+  color: #4CAF50;
   text-decoration: none;
-  background-color: #007BFF;
-  color: white;
-  border-radius: 5px;
-  font-size: 1em;
-  transition: background-color 0.3s ease;
 }
 
-.menu a:hover {
-  background-color: #0056b3;
+a:hover {
+  text-decoration: underline;
 }
 
-p {
-  margin-top: 15px;
-  font-size: 0.9em;
+footer {
+  margin-top: 20px;
+  font-size: 0.8rem;
   color: #666;
 }
