@@ -9,15 +9,18 @@
 <body>
   <h1>Available Rooms</h1>
   <ul id="roomList"></ul>
+  <button onclick="refreshRooms()">Refresh Rooms</button>
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
 
-    // ขอรายชื่อห้องจากเซิร์ฟเวอร์
-    socket.emit('get rooms');
+    // ฟังก์ชันโหลดรายชื่อห้องจากเซิร์ฟเวอร์
+    function loadRooms() {
+      socket.emit('get rooms');
+    }
 
-    // รับข้อมูลรายชื่อห้องจากเซิร์ฟเวอร์
+    // ฟังก์ชันสำหรับอัปเดตข้อมูลห้อง
     socket.on('rooms list', ({ rooms }) => {
       const roomList = document.getElementById('roomList');
       roomList.innerHTML = ''; // ล้างข้อมูลเดิมก่อน
@@ -32,9 +35,21 @@
           const joinButton = document.createElement('button');
           joinButton.textContent = 'Join Room';
           joinButton.onclick = () => {
-            // เก็บชื่อห้องใน Local Storage และไปที่หน้า Waiting Room
+            const playerName = localStorage.getItem('playerName');
+            if (!playerName) {
+              alert('Please set your player name first!');
+              window.location.href = 'player-name.html'; // ไปหน้าให้ตั้งชื่อผู้เล่น
+              return;
+            }
+
+            // ส่งคำขอเข้าร่วมห้องไปยังเซิร์ฟเวอร์
+            socket.emit('request join', {
+              roomName,
+              playerName,
+            });
+
+            // เก็บชื่อห้องใน Local Storage
             localStorage.setItem('roomName', roomName);
-            window.location.href = 'waiting-room.html';
           };
 
           li.appendChild(joinButton);
@@ -43,10 +58,29 @@
       }
     });
 
-    // กรณีเกิดข้อผิดพลาด
+    // ฟังการตอบกลับกรณีเข้าร่วมห้องสำเร็จ
+    socket.on('join approved', ({ roomName }) => {
+      alert(`You have joined room: ${roomName}`);
+      window.location.href = 'waiting-room.html'; // ไปที่หน้า Waiting Room
+    });
+
+    // ฟังการตอบกลับกรณีเข้าร่วมห้องล้มเหลว
+    socket.on('join denied', () => {
+      alert('Your request to join the room was denied.');
+    });
+
+    // ฟังกรณีเกิดข้อผิดพลาด
     socket.on('error', ({ message }) => {
       alert(message);
     });
+
+    // ฟังก์ชันรีเฟรชรายชื่อห้อง
+    function refreshRooms() {
+      loadRooms();
+    }
+
+    // เรียกโหลดรายชื่อห้องเมื่อหน้าโหลดเสร็จ
+    loadRooms();
   </script>
 </body>
 </html>
