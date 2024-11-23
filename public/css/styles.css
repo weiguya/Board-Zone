@@ -1,34 +1,99 @@
-/* Container settings */
-.container {
-  text-align: center;
-  padding: 20px;
+/* ตั้งค่าทั่วไป */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f9f9f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
-/* ตัวเลือก Select Mode */
-.mode-options {
+.container {
+  text-align: center;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
+}
+
+/* หัวข้อ */
+h1 {
+  font-size: 1.8em;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* ฟอร์มและฟิลด์ */
+form {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px; /* ระยะห่างระหว่างตัวเลือก */
 }
 
-.mode-option {
-  display: inline-block;
-  width: 200px;
-  padding: 15px;
-  font-size: 1.2em;
-  text-align: center;
-  text-decoration: none;
-  color: white;
+input[type="text"], select, input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1em;
+  box-sizing: border-box;
+}
+
+/* ปุ่ม */
+button {
   background-color: #4CAF50;
-  border: 2px solid #4CAF50;
-  border-radius: 8px;
-  transition: all 0.3s ease;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1em;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
 }
 
-.mode-option:hover {
-  background-color: white;
-  color: #4CAF50;
-  border-color: #4CAF50;
-  box-shadow: 0px 0px 10px rgba(76, 175, 80, 0.5);
+button:hover {
+  background-color: #45a049;
+}
+
+/* เมนู */
+.menu a {
+  display: block;
+  margin: 10px 0;
+  padding: 10px;
+  text-decoration: none;
+  background-color: #007BFF;
+  color: white;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 1em;
+}
+
+.menu a:hover {
+  background-color: #0056b3;
+}
+
+/* สำหรับ Select Mode */
+.options {
+  display: flex;
+  flex-direction: column;
+}
+
+.option {
+  padding: 15px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #f1f1f1;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.option:hover {
+  background-color: #e0e0e0;
 }
