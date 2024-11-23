@@ -3,28 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BoardZone</title>
+  <title>Welcome to BoardZone</title>
   <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
   <div class="container">
     <h1>Welcome to BoardZone</h1>
     <form id="playerForm">
-      <label for="playerName">Enter your name:</label>
-      <input type="text" id="playerName" placeholder="Your name" required />
-      <button type="submit">Enter Game</button>
+      <input type="text" id="playerName" placeholder="Enter your name" required>
+      <button type="submit">Enter</button>
     </form>
   </div>
-
   <script>
+    const storedPlayerName = localStorage.getItem('playerName');
+    if (storedPlayerName) {
+      window.location.href = '/select-mode.html';
+    }
+
     document.getElementById('playerForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const playerName = document.getElementById('playerName').value.trim();
       if (playerName) {
-        localStorage.setItem('playerName', playerName); // เก็บชื่อผู้เล่นใน Local Storage
-        window.location.href = 'select-mode.html'; // ไปยังหน้าเลือกโหมด
-      } else {
-        alert('Please enter your name!');
+        localStorage.setItem('playerName', playerName);
+        window.location.href = '/select-mode.html';
       }
     });
   </script>
