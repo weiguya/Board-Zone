@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Room</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <h1>Create a New Room</h1>
+  <form id="createRoomForm">
+    <label for="game">Choose Game:</label>
+    <select id="game" required>
+      <option value="Forbidden Words">คำต้องห้าม</option>
+      <option value="Who Am I">ฉันคือใคร</option>
+      <option value="Insider">Insider</option>
+    </select>
+
+    <label for="roomName">Room Name:</label>
+    <input type="text" id="roomName" placeholder="Enter room name" required>
+
+    <label for="maxPlayers">Number of Players:</label>
+    <input type="number" id="maxPlayers" min="2" max="10" value="5" required>
+
+    <button type="submit">Create Room</button>
+  </form>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    // ตรวจสอบว่ามีชื่อผู้เล่นหรือไม่
+    const playerName = localStorage.getItem('playerName');
+    if (!playerName) {
+      alert('Please enter your player name first!');
+      window.location.href = '/';
+    }
+
+    const socket = io();
+
+    document.getElementById('createRoomForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const game = document.getElementById('game').value;
+      const roomName = document.getElementById('roomName').value.trim();
+      const maxPlayers = parseInt(document.getElementById('maxPlayers').value);
+
+      if (!roomName) {
+        alert('Please enter a room name.');
+        return;
+      }
+
+      socket.emit('create room', { roomName, game, maxPlayers });
+
+      // เก็บข้อมูลห้องใน Local Storage
+      localStorage.setItem('roomName', roomName);
+      localStorage.setItem('game', game);
+      localStorage.setItem('maxPlayers', maxPlayers);
+
+      // ไปหน้ารอเพื่อน
+      window.location.href = '/waiting-room.html';
+    });
+
+    // ฟังข้อผิดพลาดจากเซิร์ฟเวอร์
+    socket.on('error', ({ message }) => {
+      alert(message);
+    });
+  </script>
+</body>
+</html>
