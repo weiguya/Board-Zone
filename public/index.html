@@ -30,11 +30,11 @@
     const menu = document.querySelector('.menu');
     const greeting = document.getElementById('greeting');
 
+    // ถ้ามีชื่อผู้เล่นใน Local Storage ให้แสดงเมนูทันที
     if (storedPlayerName) {
-      // ถ้ามีชื่อผู้เล่นแล้ว
       greeting.textContent = `Hello, ${storedPlayerName}!`;
-      playerForm.style.display = 'none'; // ซ่อนฟอร์ม
-      menu.style.display = 'block'; // แสดงเมนู
+      playerForm.style.display = 'none';
+      menu.style.display = 'block';
     }
 
     // เมื่อผู้เล่นกรอกชื่อ
