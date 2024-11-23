@@ -7,30 +7,40 @@
   <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-  <h1>Waiting Room</h1>
-  <h2 id="roomName"></h2>
-  <h3>Players</h3>
-  <ul id="playerList"></ul>
+  <div class="container">
+    <h1>Waiting Room</h1>
+    <h2 id="roomName"></h2>
+    <ul id="playerList"></ul>
 
-  <h3>Chat</h3>
-  <ul id="chatMessages"></ul>
-  <form id="chatForm">
-    <input type="text" id="chatInput" placeholder="Type a message..." required>
-    <button type="submit">Send</button>
-  </form>
+    <h3>Chat</h3>
+    <div id="chatMessages" class="chat-box"></div>
+    <form id="chatForm">
+      <input type="text" id="chatInput" placeholder="Type a message..." required>
+      <button type="submit">Send</button>
+    </form>
+  </div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
+
+    // ดึงข้อมูลจาก Local Storage
     const roomName = localStorage.getItem('roomName');
     const playerName = localStorage.getItem('playerName');
 
+    if (!roomName || !playerName) {
+      alert('Room or player information is missing!');
+      window.location.href = '/';
+    }
+
+    // แสดงชื่อห้อง
     document.getElementById('roomName').textContent = `Room: ${roomName}`;
 
-    socket.emit('create room', { roomName, playerName });
+    // ส่งคำขอเข้าร่วมห้องไปยังเซิร์ฟเวอร์
+    socket.emit('request join', { roomName, playerName });
 
-    // รับข้อมูลการอัปเดตรายชื่อผู้เล่น
-    socket.on('room updated', ({ players }) => {
+    // อัปเดตรายชื่อผู้เล่นและข้อความแชท
+    socket.on('room updated', ({ players, messages }) => {
       const playerList = document.getElementById('playerList');
       playerList.innerHTML = '';
       players.forEach((player) => {
@@ -38,22 +48,32 @@
         li.textContent = player.name;
         playerList.appendChild(li);
       });
-    });
 
-    // รับข้อความแชทใหม่
-    socket.on('chat message', ({ playerName, message }) => {
       const chatMessages = document.getElementById('chatMessages');
-      const li = document.createElement('li');
-      li.textContent = `${playerName}: ${message}`;
-      chatMessages.appendChild(li);
+      chatMessages.innerHTML = '';
+      messages.forEach(({ playerName, message }) => {
+        const p = document.createElement('p');
+        p.textContent = `${playerName}: ${message}`;
+        chatMessages.appendChild(p);
+      });
     });
 
     // ส่งข้อความแชท
     document.getElementById('chatForm').addEventListener('submit', (e) => {
       e.preventDefault();
-      const message = document.getElementById('chatInput').value;
-      socket.emit('chat message', { roomName, playerName, message });
-      document.getElementById('chatInput').value = '';
+      const message = document.getElementById('chatInput').value.trim();
+      if (message) {
+        socket.emit('chat message', { roomName, playerName, message });
+        document.getElementById('chatInput').value = '';
+      }
+    });
+
+    // รับข้อความแชทใหม่
+    socket.on('chat message', ({ playerName, message }) => {
+      const chatMessages = document.getElementById('chatMessages');
+      const p = document.createElement('p');
+      p.textContent = `${playerName}: ${message}`;
+      chatMessages.appendChild(p);
     });
   </script>
 </body>
