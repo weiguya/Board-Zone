@@ -25,22 +25,23 @@ io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
   // เมื่อผู้ใช้สร้างห้อง
-  socket.on('create room', ({ roomName, maxPlayers, game }) => {
-    if (rooms[roomName]) {
-      socket.emit('error', { message: 'ห้องนี้มีอยู่แล้ว' });
-    } else {
-      rooms[roomName] = {
-        creator: socket.id,
-        maxPlayers,
-        game,
-        players: [{ id: socket.id, name: 'เจ้าของห้อง' }],
-        pendingRequests: [],
-      };
-      socket.join(roomName);
-      console.log(`Room created: ${roomName}, Game: ${game}, Max Players: ${maxPlayers}`);
-      io.emit('rooms updated', { rooms: Object.keys(rooms) }); // แจ้งว่ามีห้องใหม่
-    }
-  });
+socket.on('create room', ({ roomName, maxPlayers, game }) => {
+  if (rooms[roomName]) {
+    socket.emit('error', { message: 'ห้องนี้มีอยู่แล้ว' });
+  } else {
+    rooms[roomName] = {
+      creator: socket.id,
+      maxPlayers,
+      game,
+      players: [{ id: socket.id, name: 'เจ้าของห้อง' }],
+      pendingRequests: [],
+    };
+    socket.join(roomName);
+    console.log(`Room created: ${roomName}, Game: ${game}, Max Players: ${maxPlayers}`);
+    io.emit('rooms updated', { rooms: Object.keys(rooms) }); // แจ้งว่ามีห้องใหม่
+  }
+});
+
 
   // เมื่อผู้ใช้ขอเข้าร่วมห้อง
   socket.on('request join', ({ roomName, playerName }) => {
