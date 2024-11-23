@@ -40,12 +40,12 @@ io.on('connection', (socket) => {
   });
 
   // เมื่อผู้ใช้ขอเข้าร่วมห้อง
-  socket.on('request join', ({ roomName, playerName }) => {
+  socket.on('request join', ({ roomName }) => {
     if (rooms[roomName]) {
       const isPlayerExists = rooms[roomName].players.some((player) => player.id === socket.id);
 
       if (!isPlayerExists) {
-        rooms[roomName].players.push({ id: socket.id, name: playerName });
+        rooms[roomName].players.push({ id: socket.id, name: `Player ${rooms[roomName].players.length + 1}` });
       }
       socket.join(roomName);
 
@@ -59,9 +59,9 @@ io.on('connection', (socket) => {
   });
 
   // เมื่อผู้ใช้ส่งข้อความในแชท
-  socket.on('chat message', ({ roomName, playerName, message }) => {
+  socket.on('chat message', ({ roomName, message }) => {
     if (rooms[roomName]) {
-      const chatMessage = { playerName, message };
+      const chatMessage = { playerName: `Player ${socket.id.slice(-4)}`, message };
       rooms[roomName].messages.push(chatMessage); // เก็บข้อความไว้ในห้อง
       io.to(roomName).emit('chat message', chatMessage); // ส่งข้อความถึงทุกคนในห้อง
     } else {
