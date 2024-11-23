@@ -24,7 +24,7 @@ io.on('connection', (socket) => {
       rooms[roomName] = {
         game,
         maxPlayers,
-        players: [{ id: socket.id, name: playerName }],
+        players: [{ id: socket.id, name: playerName, ready: false }], // เพิ่มสถานะ ready
         messages: [],
       };
       socket.join(roomName);
@@ -52,7 +52,7 @@ io.on('connection', (socket) => {
       const room = rooms[roomName];
 
       if (!room.players.some((player) => player.id === socket.id)) {
-        room.players.push({ id: socket.id, name: playerName });
+        room.players.push({ id: socket.id, name: playerName, ready: false }); // เพิ่มสถานะ ready
         socket.join(roomName);
 
         io.to(roomName).emit('room updated', {
@@ -63,6 +63,35 @@ io.on('connection', (socket) => {
       }
     } else {
       socket.emit('error', { message: 'Room does not exist!' });
+    }
+  });
+
+  // เมื่อผู้เล่นกดปุ่ม "Ready" หรือ "Not Ready"
+  socket.on('toggle ready', ({ roomName }) => {
+    const room = rooms[roomName];
+    if (room) {
+      const player = room.players.find((p) => p.id === socket.id);
+      if (player) {
+        player.ready = !player.ready; // สลับสถานะ ready
+        io.to(roomName).emit('room updated', {
+          players: room.players,
+          messages: room.messages,
+        });
+      }
+    }
+  });
+
+  // เมื่อเจ้าของห้องกดปุ่ม "Start Game"
+  socket.on('start game', ({ roomName }) => {
+    const room = rooms[roomName];
+    if (room) {
+      const allReady = room.players.every((player) => player.ready);
+      if (allReady) {
+        io.to(roomName).emit('game started', { game: room.game });
+        console.log(`Game started in room: ${roomName}`);
+      } else {
+        socket.emit('error', { message: 'Not all players are ready!' });
+      }
     }
   });
 
