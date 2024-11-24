@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BoardZone - Welcome</title>
+  <title>BoardZone</title>
+  <link rel="stylesheet" href="/css/styles.css">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -18,18 +19,22 @@
   </style>
 </head>
 <body>
-  <h1>Welcome to BoardZone</h1>
-  <form id="startForm">
-    <input type="text" id="username" placeholder="Enter your name" required>
-    <button type="submit">Enter Game</button>
-  </form>
+  <div class="container">
+    <h1>Welcome to BoardZone</h1>
+    <form id="playerForm">
+      <label for="playerName">Enter your name:</label>
+      <input type="text" id="playerName" placeholder="Your name" required />
+      <button type="submit">Enter Game</button>
+    </form>
+  </div>
+
   <script>
-    document.getElementById('startForm').addEventListener('submit', (e) => {
+    document.getElementById('playerForm').addEventListener('submit', (e) => {
       e.preventDefault();
-      const username = document.getElementById('username').value;
-      if (username) {
-        localStorage.setItem('username', username);
-        window.location.href = 'select.html';
+      const playerName = document.getElementById('playerName').value.trim();
+      if (playerName) {
+        localStorage.setItem('playerName', playerName);
+        window.location.href = 'select-mode.html';
       } else {
         alert('Please enter your name!');
       }

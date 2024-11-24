@@ -3,11 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BoardZone - Select</title>
+  <title>BoardZone - Select Mode</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .option {
+      margin: 10px;
+      padding: 15px 30px;
+      font-size: 1.2rem;
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .option:hover {
+      background-color: #ddd;
+    }
+  </style>
 </head>
 <body>
-  <h1>เลือกตัวเลือกของคุณ</h1>
-  <button onclick="window.location.href='find-room.html'">ค้นหาห้อง</button>
-  <button onclick="window.location.href='prepare.html'">สร้างห้อง</button>
+  <div class="container">
+    <h1>Select Mode</h1>
+    <div class="options">
+      <div class="option" onclick="window.location.href='create-room.html'">Create Room</div>
+      <div class="option" onclick="window.location.href='find-room.html'">Find Room</div>
+    </div>
+  </div>
 </body>
 </html>
