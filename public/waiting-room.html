@@ -21,26 +21,34 @@
     // อัปเดตรายชื่อผู้เล่น
     const playerList = document.getElementById('playerList');
     playerList.innerHTML = '';
-    players.forEach((player) => {
-      const li = document.createElement('li');
-      li.textContent = player.name;
-      playerList.appendChild(li);
-    });
+    if (players && Array.isArray(players)) {
+      players.forEach((player) => {
+        const li = document.createElement('li');
+        li.textContent = player.name;
+        playerList.appendChild(li);
+      });
+    }
 
     // แสดงปุ่มเริ่มเกมเฉพาะเจ้าของห้อง
     const startGameButton = document.getElementById('startGameButton');
-    startGameButton.style.display = players[0]?.id === socket.id ? 'block' : 'none';
+    if (players[0]?.id === socket.id) {
+      startGameButton.style.display = 'block';
+    } else {
+      startGameButton.style.display = 'none';
+    }
 
     // อัปเดตข้อความแชท
     const chatMessages = document.getElementById('chatMessages');
     chatMessages.innerHTML = '';
-    messages.forEach(({ playerName, message }) => {
-      const p = document.createElement('p');
-      p.textContent = `${playerName}: ${message}`;
-      chatMessages.appendChild(p);
-    });
+    if (messages && Array.isArray(messages)) {
+      messages.forEach(({ playerName, message }) => {
+        const p = document.createElement('p');
+        p.textContent = `${playerName}: ${message}`;
+        chatMessages.appendChild(p);
+      });
+    }
 
-    // เลื่อนกล่องข้อความแชทอัตโนมัติ
+    // เลื่อนกล่องข้อความแชทให้อยู่ด้านล่างสุด
     chatMessages.scrollTop = chatMessages.scrollHeight;
   });
 
@@ -76,10 +84,11 @@
   socket.on('game started', ({ game }) => {
     alert(`Game "${game}" started!`);
     // เปลี่ยนหน้าไปยังหน้าของเกม
+    window.location.href = `/game?name=${encodeURIComponent(game)}`;
   });
 
   // ฟังข้อผิดพลาดจากเซิร์ฟเวอร์
   socket.on('error', ({ message }) => {
-    alert(message);
+    alert(message || 'An unknown error occurred.');
   });
 </script>
