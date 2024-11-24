@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Waiting Room</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <h1>Waiting Room</h1>
+  <h2 id="roomName"></h2>
+  <div id="chatMessages"></div>
+  <form id="chatForm">
+    <input type="text" id="chatInput" placeholder="Type a message..." required>
+    <button type="submit">Send</button>
+  </form>
+
+  <script src="http://localhost:10000/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    const roomName = localStorage.getItem('roomName');
+    const playerName = localStorage.getItem('playerName');
+
+    if (!roomName || !playerName) {
+      alert('Room or player information is missing!');
+      window.location.href = '/';
+    }
+
+    document.getElementById('roomName').textContent = `Room: ${roomName}`;
+
+    socket.emit('join room', { roomName, playerName });
+
+    socket.on('chat message', ({ playerName, message }) => {
+      const chatMessages = document.getElementById('chatMessages');
+      const p = document.createElement('p');
+      p.textContent = `${playerName}: ${message}`;
+      chatMessages.appendChild(p);
+    });
+
+    document.getElementById('chatForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const message = document.getElementById('chatInput').value.trim();
+      if (message) {
+        socket.emit('chat message', { roomName, playerName, message });
+        document.getElementById('chatInput').value = '';
+      }
+    });
+  </script>
+</body>
+</html>
