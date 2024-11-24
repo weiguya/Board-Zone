@@ -1,80 +1,84 @@
 const express = require('express');
+const path = require('path');
 const http = require('http');
 const { Server } = require('socket.io');
-const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+const PORT = 10000; // ใช้พอร์ต 10000
+
+// เสิร์ฟ Static Files
 app.use(express.static(path.join(__dirname, 'public')));
 
 // เก็บข้อมูลห้อง
 let rooms = {};
 
+// ตั้งค่า Socket.IO
 io.on('connection', (socket) => {
-  console.log('A user connected');
+  console.log('A user connected:', socket.id);
 
-  // เมื่อผู้ใช้สร้างห้อง
-  socket.on('create room', (data) => {
-    const { roomName, maxPlayers } = data;
-    rooms[roomName] = {
-      host: socket.id,
-      players: [socket.id],
-      maxPlayers: maxPlayers,
-      pendingRequests: [],
-    };
-    socket.join(roomName);
-    io.emit('rooms updated', rooms); // แจ้งทุกคนว่ามีห้องใหม่
-  });
-
-  // เมื่อผู้ใช้ขอเข้าร่วมห้อง
-  socket.on('request join', (data) => {
-    const { roomName } = data;
-    if (rooms[roomName]) {
-      rooms[roomName].pendingRequests.push(socket.id);
-      io.to(rooms[roomName].host).emit('join requests', {
-        roomName,
-        requests: rooms[roomName].pendingRequests,
-      });
+  // สร้างห้อง
+  socket.on('create room', ({ roomName, playerName }) => {
+    if (!rooms[roomName]) {
+      rooms[roomName] = {
+        players: [{ id: socket.id, name: playerName }],
+        messages: [],
+      };
+      socket.join(roomName);
+      console.log(`Room created: ${roomName}`);
+      io.emit('rooms updated', { rooms: Object.keys(rooms) });
+    } else {
+      socket.emit('error', { message: 'Room already exists!' });
     }
   });
 
-  // เจ้าของห้องอนุมัติหรือปฏิเสธ
-  socket.on('respond to request', (data) => {
-    const { roomName, playerId, accept } = data;
+  // ส่งข้อความแชท
+  socket.on('chat message', ({ roomName, playerName, message }) => {
     if (rooms[roomName]) {
-      rooms[roomName].pendingRequests = rooms[roomName].pendingRequests.filter(
-        (id) => id !== playerId
-      );
-      if (accept) {
-        rooms[roomName].players.push(playerId);
-        io.to(playerId).emit('join approved', { roomName });
-      } else {
-        io.to(playerId).emit('join denied');
-      }
-      io.to(rooms[roomName].host).emit('join requests', {
-        roomName,
-        requests: rooms[roomName].pendingRequests,
-      });
+      const chatMessage = { playerName, message };
+      rooms[roomName].messages.push(chatMessage);
+      io.to(roomName).emit('chat message', chatMessage);
+    } else {
+      socket.emit('error', { message: 'Room does not exist!' });
     }
   });
 
-  // เมื่อผู้ใช้ตัดการเชื่อมต่อ
+  // เข้าร่วมห้อง
+  socket.on('join room', ({ roomName, playerName }) => {
+    if (rooms[roomName]) {
+      rooms[roomName].players.push({ id: socket.id, name: playerName });
+      socket.join(roomName);
+      io.to(roomName).emit('room updated', {
+        players: rooms[roomName].players,
+        messages: rooms[roomName].messages,
+      });
+    } else {
+      socket.emit('error', { message: 'Room does not exist!' });
+    }
+  });
+
+  // ตัดการเชื่อมต่อ
   socket.on('disconnect', () => {
-    console.log('A user disconnected');
-    // ลบผู้ใช้ออกจากห้องที่เกี่ยวข้อง
-    Object.keys(rooms).forEach((roomName) => {
-      const room = rooms[roomName];
-      room.players = room.players.filter((id) => id !== socket.id);
-      if (room.host === socket.id) {
+    console.log('User disconnected:', socket.id);
+    for (const roomName in rooms) {
+      rooms[roomName].players = rooms[roomName].players.filter(
+        (player) => player.id !== socket.id
+      );
+
+      if (rooms[roomName].players.length === 0) {
         delete rooms[roomName];
+      } else {
+        io.to(roomName).emit('room updated', {
+          players: rooms[roomName].players,
+          messages: rooms[roomName].messages,
+        });
       }
-    });
-    io.emit('rooms updated', rooms);
+    }
   });
 });
 
-server.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000');
+server.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
