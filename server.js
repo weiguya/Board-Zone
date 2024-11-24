@@ -9,6 +9,7 @@ const io = new Server(server);
 
 const PORT = process.env.PORT || 3000;
 
+// เสิร์ฟไฟล์ static เช่น HTML, CSS, JavaScript
 app.use(express.static(path.join(__dirname, 'public')));
 
 // เก็บข้อมูลห้อง
@@ -29,7 +30,7 @@ io.on('connection', (socket) => {
       };
       socket.join(roomName);
       console.log(`Room created: ${roomName}, Game: ${game}, Max Players: ${maxPlayers}`);
-      io.emit('rooms updated', { rooms: Object.keys(rooms) }); // อัปเดตข้อมูลห้องทั้งหมดให้ทุกคน
+      io.emit('rooms updated', { rooms: Object.keys(rooms) });
     } else {
       socket.emit('error', { message: 'Room already exists!' });
     }
@@ -39,20 +40,20 @@ io.on('connection', (socket) => {
   socket.on('chat message', ({ roomName, playerName, message }) => {
     if (rooms[roomName]) {
       const chatMessage = { playerName, message };
-      rooms[roomName].messages.push(chatMessage); // เก็บข้อความในห้อง
+      rooms[roomName].messages.push(chatMessage);
       io.to(roomName).emit('chat message', chatMessage); // ส่งข้อความไปยังทุกคนในห้อง
+      console.log(`Message in room ${roomName}: ${playerName} - ${message}`);
     } else {
       socket.emit('error', { message: 'Room does not exist!' });
     }
   });
 
-  // อัปเดตรายชื่อผู้เล่นในห้อง
+  // เมื่อผู้ใช้เข้าร่วมห้อง
   socket.on('join room', ({ roomName, playerName }) => {
     if (rooms[roomName]) {
       const room = rooms[roomName];
-
       if (!room.players.some((player) => player.id === socket.id)) {
-        room.players.push({ id: socket.id, name: playerName, ready: false }); // เพิ่มสถานะ ready
+        room.players.push({ id: socket.id, name: playerName, ready: false });
         socket.join(roomName);
 
         io.to(roomName).emit('room updated', {
@@ -66,7 +67,7 @@ io.on('connection', (socket) => {
     }
   });
 
-  // เมื่อผู้เล่นกดปุ่ม "Ready" หรือ "Not Ready"
+  // เมื่อผู้เล่นกดปุ่ม "Ready"
   socket.on('toggle ready', ({ roomName }) => {
     const room = rooms[roomName];
     if (room) {
@@ -77,6 +78,7 @@ io.on('connection', (socket) => {
           players: room.players,
           messages: room.messages,
         });
+        console.log(`Player ${player.name} is ${player.ready ? 'ready' : 'not ready'}`);
       }
     }
   });
@@ -112,7 +114,7 @@ io.on('connection', (socket) => {
         });
       }
     }
-    io.emit('rooms updated', { rooms: Object.keys(rooms) }); // อัปเดตข้อมูลห้องทั้งหมด
+    io.emit('rooms updated', { rooms: Object.keys(rooms) });
   });
 });
 
