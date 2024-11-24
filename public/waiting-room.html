@@ -94,11 +94,16 @@
     });
 
     // รับข้อความแชทใหม่
-    socket.on('chat message', ({ playerName, message }) => {
-      const chatMessages = document.getElementById('chatMessages');
-      const p = document.createElement('p');
-      p.textContent = `${playerName}: ${message}`;
-      chatMessages.appendChild(p);
+socket.on('chat message', ({ playerName, message }) => {
+    console.log('New chat message received:', playerName, message); // ตรวจสอบว่าข้อความมาถึง
+
+    const chatMessages = document.getElementById('chatMessages');
+    const p = document.createElement('p');
+    p.textContent = `${playerName}: ${message}`; // แสดงข้อความ
+    chatMessages.appendChild(p); // เพิ่มข้อความใหม่ลงในช่องแชท
+
+    chatMessages.scrollTop = chatMessages.scrollHeight; // เลื่อนแชทให้อยู่ด้านล่างสุด
+});
 
       // เลื่อนกล่องข้อความแชทอัตโนมัติ
       chatMessages.scrollTop = chatMessages.scrollHeight;
