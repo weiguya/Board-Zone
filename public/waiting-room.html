@@ -1,129 +1,85 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Waiting Room</title>
-  <link rel="stylesheet" href="/css/styles.css">
-  <style>
-    .chat-box {
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      height: 200px;
-      overflow-y: auto;
-      padding: 10px;
-      background-color: #f9f9f9;
-    }
-    .chat-box p {
-      margin: 5px 0;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>Waiting Room</h1>
-    <h2 id="roomName"></h2>
-    <h3>Players</h3>
-    <ul id="playerList"></ul>
+<script>
+  const socket = io();
 
-    <h3>Chat</h3>
-    <div id="chatMessages" class="chat-box"></div>
-    <form id="chatForm">
-      <input type="text" id="chatInput" placeholder="Type a message..." required>
-      <button type="submit">Send</button>
-    </form>
+  // ดึงข้อมูลจาก Local Storage
+  const roomName = localStorage.getItem('roomName');
+  const playerName = localStorage.getItem('playerName');
 
-    <button id="startGameButton" style="display: none;">Start Game</button>
-  </div>
+  if (!roomName || !playerName) {
+    alert('Room or player information is missing!');
+    window.location.href = '/';
+  }
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    const socket = io();
+  // แสดงชื่อห้อง
+  document.getElementById('roomName').textContent = `Room: ${roomName}`;
 
-    // ดึงข้อมูลจาก Local Storage
-    const roomName = localStorage.getItem('roomName');
-    const playerName = localStorage.getItem('playerName');
+  // ส่งคำขอเข้าร่วมห้องไปยังเซิร์ฟเวอร์
+  socket.emit('request join', { roomName, playerName });
 
-    if (!roomName || !playerName) {
-      alert('Room or player information is missing!');
-      window.location.href = '/';
-    }
-
-    // แสดงชื่อห้อง
-    document.getElementById('roomName').textContent = `Room: ${roomName}`;
-
-    // ส่งคำขอเข้าร่วมห้องไปยังเซิร์ฟเวอร์
-    socket.emit('request join', { roomName, playerName });
-
-    // อัปเดตรายชื่อผู้เล่นและข้อความแชท
-    socket.on('room updated', ({ players, messages }) => {
-      // อัปเดตรายชื่อผู้เล่น
-      const playerList = document.getElementById('playerList');
-      playerList.innerHTML = '';
-      players.forEach((player) => {
-        const li = document.createElement('li');
-        li.textContent = player.name;
-        playerList.appendChild(li);
-      });
-
-      // แสดงปุ่มเริ่มเกมเฉพาะเจ้าของห้อง
-      const startGameButton = document.getElementById('startGameButton');
-      startGameButton.style.display = players[0]?.id === socket.id ? 'block' : 'none';
-
-      // อัปเดตข้อความแชท
-      const chatMessages = document.getElementById('chatMessages');
-      chatMessages.innerHTML = '';
-      messages.forEach(({ playerName, message }) => {
-        const p = document.createElement('p');
-        p.textContent = `${playerName}: ${message}`;
-        chatMessages.appendChild(p);
-      });
-
-      // เลื่อนกล่องข้อความแชทอัตโนมัติ
-      chatMessages.scrollTop = chatMessages.scrollHeight;
+  // อัปเดตรายชื่อผู้เล่นและข้อความแชท
+  socket.on('room updated', ({ players, messages }) => {
+    // อัปเดตรายชื่อผู้เล่น
+    const playerList = document.getElementById('playerList');
+    playerList.innerHTML = '';
+    players.forEach((player) => {
+      const li = document.createElement('li');
+      li.textContent = player.name;
+      playerList.appendChild(li);
     });
 
-    // ส่งข้อความแชท
-    document.getElementById('chatForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const message = document.getElementById('chatInput').value.trim();
-      if (message) {
-        socket.emit('chat message', { roomName, playerName, message });
-        document.getElementById('chatInput').value = '';
-      }
+    // แสดงปุ่มเริ่มเกมเฉพาะเจ้าของห้อง
+    const startGameButton = document.getElementById('startGameButton');
+    startGameButton.style.display = players[0]?.id === socket.id ? 'block' : 'none';
+
+    // อัปเดตข้อความแชท
+    const chatMessages = document.getElementById('chatMessages');
+    chatMessages.innerHTML = '';
+    messages.forEach(({ playerName, message }) => {
+      const p = document.createElement('p');
+      p.textContent = `${playerName}: ${message}`;
+      chatMessages.appendChild(p);
     });
 
-    // รับข้อความแชทใหม่
-socket.on('chat message', ({ playerName, message }) => {
-    console.log('New chat message received:', playerName, message); // ตรวจสอบว่าข้อความมาถึง
+    // เลื่อนกล่องข้อความแชทอัตโนมัติ
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  });
+
+  // ส่งข้อความแชท
+  document.getElementById('chatForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const message = document.getElementById('chatInput').value.trim();
+    if (message) {
+      socket.emit('chat message', { roomName, playerName, message });
+      document.getElementById('chatInput').value = '';
+    }
+  });
+
+  // รับข้อความแชทใหม่
+  socket.on('chat message', ({ playerName, message }) => {
+    console.log('New chat message received:', playerName, message);
 
     const chatMessages = document.getElementById('chatMessages');
     const p = document.createElement('p');
-    p.textContent = `${playerName}: ${message}`; // แสดงข้อความ
-    chatMessages.appendChild(p); // เพิ่มข้อความใหม่ลงในช่องแชท
+    p.textContent = `${playerName}: ${message}`;
+    chatMessages.appendChild(p);
 
-    chatMessages.scrollTop = chatMessages.scrollHeight; // เลื่อนแชทให้อยู่ด้านล่างสุด
-});
+    // เลื่อนกล่องข้อความแชทให้อยู่ด้านล่างสุด
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  });
 
-      // เลื่อนกล่องข้อความแชทอัตโนมัติ
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    });
+  // เมื่อเจ้าของห้องกดเริ่มเกม
+  document.getElementById('startGameButton').addEventListener('click', () => {
+    socket.emit('start game', { roomName });
+  });
 
-    // เมื่อเจ้าของห้องกดเริ่มเกม
-    document.getElementById('startGameButton').addEventListener('click', () => {
-      socket.emit('start game', { roomName });
-    });
+  // ฟังเหตุการณ์เริ่มเกม
+  socket.on('game started', ({ game }) => {
+    alert(`Game "${game}" started!`);
+    // เปลี่ยนหน้าไปยังหน้าของเกม
+  });
 
-    // ฟังเหตุการณ์เริ่มเกม
-    socket.on('game started', ({ game }) => {
-      alert(`Game "${game}" started!`);
-      // เปลี่ยนหน้าไปยังหน้าของเกม
-    });
-
-    // ฟังข้อผิดพลาดจากเซิร์ฟเวอร์
-    socket.on('error', ({ message }) => {
-      alert(message);
-    });
-  </script>
-</body>
-</html>
+  // ฟังข้อผิดพลาดจากเซิร์ฟเวอร์
+  socket.on('error', ({ message }) => {
+    alert(message);
+  });
+</script>
