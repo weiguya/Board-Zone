@@ -7,9 +7,9 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-const PORT = process.env.PORT || 3000;
+const PORT = 10000; // กำหนดให้เซิร์ฟเวอร์ใช้พอร์ต 10000
 
-// เสิร์ฟไฟล์ static เช่น HTML, CSS, JavaScript
+// เสิร์ฟ Static Files เช่น HTML, CSS, JavaScript
 app.use(express.static(path.join(__dirname, 'public')));
 
 // เก็บข้อมูลห้อง
@@ -25,7 +25,7 @@ io.on('connection', (socket) => {
       rooms[roomName] = {
         game,
         maxPlayers,
-        players: [{ id: socket.id, name: playerName, ready: false }], // เพิ่มสถานะ ready
+        players: [{ id: socket.id, name: playerName, ready: false }],
         messages: [],
       };
       socket.join(roomName);
@@ -41,7 +41,7 @@ io.on('connection', (socket) => {
     if (rooms[roomName]) {
       const chatMessage = { playerName, message };
       rooms[roomName].messages.push(chatMessage);
-      io.to(roomName).emit('chat message', chatMessage); // ส่งข้อความไปยังทุกคนในห้อง
+      io.to(roomName).emit('chat message', chatMessage);
       console.log(`Message in room ${roomName}: ${playerName} - ${message}`);
     } else {
       socket.emit('error', { message: 'Room does not exist!' });
@@ -73,7 +73,7 @@ io.on('connection', (socket) => {
     if (room) {
       const player = room.players.find((p) => p.id === socket.id);
       if (player) {
-        player.ready = !player.ready; // สลับสถานะ ready
+        player.ready = !player.ready;
         io.to(roomName).emit('room updated', {
           players: room.players,
           messages: room.messages,
