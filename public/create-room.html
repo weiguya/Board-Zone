@@ -15,10 +15,11 @@
       justify-content: center;
       margin: 0;
       padding: 1rem;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .create-room-container {
-      padding: 2.5rem;
+      padding: 2rem;
       text-align: center;
       max-width: 600px;
       background: rgba(255, 255, 255, 0.95);
@@ -93,6 +94,7 @@
       transition: all 0.3s ease;
       margin-top: 1rem;
       font-family: 'Sarabun', sans-serif;
+      width: 100%;
     }
 
     .create-button:hover {
@@ -124,14 +126,63 @@
       animation: fadeIn 0.6s ease-out;
     }
 
+    /* Responsive Design */
     @media (max-width: 640px) {
       .create-room-container {
-        margin: 1rem;
+        margin: 0.5rem;
         padding: 1.5rem;
+        border-radius: 15px;
       }
 
       .room-title {
         font-size: 1.75rem;
+      }
+
+      .room-subtitle {
+        font-size: 1rem;
+      }
+
+      .form-input {
+        min-height: 44px;
+        font-size: 16px; /* ป้องกัน iOS zoom */
+      }
+
+      .create-button {
+        padding: 0.875rem 1.5rem;
+      }
+
+      .form-group label {
+        font-size: 0.95rem;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .create-room-container {
+        padding: 1rem;
+      }
+
+      .room-form {
+        gap: 1rem;
+        margin: 1rem auto;
+      }
+    }
+
+    @media (max-height: 600px) and (orientation: landscape) {
+      .create-room-container {
+        padding: 1rem;
+        margin: 0.5rem;
+      }
+
+      .room-form {
+        margin: 1rem auto;
+      }
+
+      .room-title {
+        font-size: 1.5rem;
+      }
+
+      .room-subtitle {
+        margin-bottom: 1rem;
       }
     }
   </style>
@@ -173,52 +224,5 @@
       <button type="submit" class="create-button">สร้างห้อง</button>
     </form>
   </div>
-
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    const playerName = localStorage.getItem('playerName');
-    if (!playerName) {
-      alert('กรุณาใส่ชื่อผู้เล่นก่อน!');
-      window.location.href = '/';
-    }
-
-    const socket = io();
-
-    socket.on('connect', () => {
-      console.log('เชื่อมต่อกับ Socket.IO server สำเร็จ!');
-    });
-
-    socket.on('connect_error', (err) => {
-      console.error('เกิดข้อผิดพลาดในการเชื่อมต่อ Socket.IO:', err);
-    });
-
-    document.getElementById('createRoomForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const roomName = document.getElementById('roomName').value.trim();
-      const game = document.getElementById('game').value;
-      const maxPlayers = parseInt(document.getElementById('maxPlayers').value);
-
-      if (!roomName) {
-        alert('กรุณาใส่ชื่อห้อง');
-        return;
-      }
-
-      if (!game || !maxPlayers) {
-        alert('กรุณากรอกข้อมูลให้ครบทุกช่อง!');
-        return;
-      }
-
-      localStorage.setItem('roomName', roomName);
-      localStorage.setItem('game', game);
-      localStorage.setItem('maxPlayers', maxPlayers);
-
-      socket.emit('create room', { roomName, game, maxPlayers });
-      window.location.href = '/waiting-room.html';
-    });
-
-    socket.on('error', ({ message }) => {
-      alert(message);
-    });
-  </script>
 </body>
 </html>
