@@ -3,41 +3,125 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BoardZone - Select Mode</title>
+  <title>Select Mode - BoardZone</title>
   <link rel="stylesheet" href="/css/styles.css">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 50px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
+
     .container {
+      padding: 2rem;
+      text-align: center;
+      max-width: 800px;
+    }
+
+    .welcome-text {
+      color: #4a5568;
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+    }
+
+    .player-name {
+      color: #4c51bf;
+      font-weight: 600;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .option {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid #e2e8f0;
       display: flex;
       flex-direction: column;
       align-items: center;
+      gap: 1rem;
     }
-    .option {
-      margin: 10px;
-      padding: 15px 30px;
-      font-size: 1.2rem;
-      background-color: #f0f0f0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
+
     .option:hover {
-      background-color: #ddd;
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      border-color: #667eea;
+    }
+
+    .option-icon {
+      font-size: 2.5rem;
+      color: #667eea;
+    }
+
+    .option-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #2d3748;
+    }
+
+    .option-description {
+      color: #718096;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 1.5rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .options {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Select Mode</h1>
+  <div class="container fade-in">
+    <h1>Select Game Mode</h1>
+    <p class="welcome-text">Welcome, <span class="player-name" id="playerNameDisplay">Player</span>! Choose how you want to play:</p>
+    
     <div class="options">
-      <div class="option" onclick="window.location.href='create-room.html'">Create Room</div>
-      <div class="option" onclick="window.location.href='find-room.html'">Find Room</div>
+      <div class="option" onclick="window.location.href='create-room.html'">
+        <div class="option-icon">🎮</div>
+        <div class="option-title">Create Room</div>
+        <p class="option-description">Create your own game room and invite friends to join. Be the host and set your own rules!</p>
+      </div>
+      
+      <div class="option" onclick="window.location.href='find-room.html'">
+        <div class="option-icon">🔍</div>
+        <div class="option-title">Find Room</div>
+        <p class="option-description">Join an existing game room. Browse available rooms and jump right into the action!</p>
+      </div>
     </div>
   </div>
+
+  <script>
+    // แสดงชื่อผู้เล่นจาก localStorage
+    document.addEventListener('DOMContentLoaded', () => {
+      const playerName = localStorage.getItem('playerName');
+      if (playerName) {
+        document.getElementById('playerNameDisplay').textContent = playerName;
+      }
+    });
+  </script>
 </body>
 </html>

@@ -3,27 +3,140 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create Room</title>
+  <title>Create Room - BoardZone</title>
   <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .create-room-container {
+      padding: 2rem;
+      text-align: center;
+      max-width: 600px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      margin: 2rem auto;
+    }
+
+    .room-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      max-width: 400px;
+      margin: 2rem auto;
+    }
+
+    .form-group {
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #4a5568;
+      font-weight: 600;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      outline: none;
+    }
+
+    select.form-input {
+      background-color: white;
+      cursor: pointer;
+    }
+
+    .create-button {
+      background: #667eea;
+      color: white;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 1rem;
+    }
+
+    .create-button:hover {
+      background: #5a67d8;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    }
+
+    .room-title {
+      color: #2d3748;
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .room-subtitle {
+      color: #4a5568;
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    @media (max-width: 640px) {
+      .create-room-container {
+        margin: 1rem;
+        padding: 1.5rem;
+      }
+
+      .room-title {
+        font-size: 2rem;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Create a Room</h1>
-    <form id="createRoomForm">
-      <label for="roomName">Room Name:</label>
-      <input type="text" id="roomName" placeholder="Enter room name" required>
+  <div class="create-room-container fade-in">
+    <h1 class="room-title">Create a Room</h1>
+    <p class="room-subtitle">Set up your game room and invite friends to play!</p>
+    
+    <form id="createRoomForm" class="room-form">
+      <div class="form-group">
+        <label for="roomName">Room Name</label>
+        <input type="text" id="roomName" class="form-input" placeholder="Enter room name" required>
+      </div>
       
-      <label for="game">Choose Game:</label>
-      <select id="game" required>
-        <option value="Forbidden Words">คำต้องห้าม</option>
-        <option value="Who Am I">ฉันคือใคร</option>
-        <option value="Insider">Insider</option>
-      </select>
+      <div class="form-group">
+        <label for="game">Choose Game</label>
+        <select id="game" class="form-input" required>
+          <option value="Forbidden Words">คำต้องห้าม</option>
+          <option value="Who Am I">ฉันคือใคร</option>
+          <option value="Insider">Insider</option>
+        </select>
+      </div>
 
-      <label for="maxPlayers">Number of Players:</label>
-      <input type="number" id="maxPlayers" min="2" max="10" value="5" required>
+      <div class="form-group">
+        <label for="maxPlayers">Number of Players</label>
+        <input type="number" id="maxPlayers" class="form-input" min="2" max="10" value="5" required>
+      </div>
 
-      <button type="submit">Create Room</button>
+      <button type="submit" class="create-button">Create Room</button>
     </form>
   </div>
 

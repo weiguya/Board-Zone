@@ -35,11 +35,15 @@ io.on('connection', (socket) => {
   });
 
   // ส่งข้อความแชท
-  socket.on('chat message', ({ roomName, playerName, message }) => {
+  socket.on('chat message', (data) => {
+    console.log("Received 'chat message' event:", data); // Debug ข้อมูลที่ได้รับ
+    const { roomName, playerName, message } = data;
+
     if (rooms[roomName]) {
       const chatMessage = { playerName, message };
       rooms[roomName].messages.push(chatMessage);
-      io.to(roomName).emit('chat message', chatMessage);
+      console.log(`Message in room ${roomName}: ${playerName} - ${message}`); // แสดงผลข้อความใน CMD
+      io.to(roomName).emit('chat message', chatMessage); // ส่งข้อความกลับไปยังผู้เล่นในห้อง
     } else {
       socket.emit('error', { message: 'Room does not exist!' });
     }
@@ -47,6 +51,7 @@ io.on('connection', (socket) => {
 
   // เข้าร่วมห้อง
   socket.on('join room', ({ roomName, playerName }) => {
+    console.log(`User ${playerName} attempting to join room: ${roomName}`);
     if (rooms[roomName]) {
       rooms[roomName].players.push({ id: socket.id, name: playerName });
       socket.join(roomName);
@@ -54,6 +59,7 @@ io.on('connection', (socket) => {
         players: rooms[roomName].players,
         messages: rooms[roomName].messages,
       });
+      console.log(`User ${playerName} joined room: ${roomName}`);
     } else {
       socket.emit('error', { message: 'Room does not exist!' });
     }
@@ -69,6 +75,7 @@ io.on('connection', (socket) => {
 
       if (rooms[roomName].players.length === 0) {
         delete rooms[roomName];
+        console.log(`Room deleted: ${roomName}`);
       } else {
         io.to(roomName).emit('room updated', {
           players: rooms[roomName].players,

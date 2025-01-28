@@ -3,28 +3,102 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BoardZone</title>
+  <title>Welcome to BoardZone</title>
   <link rel="stylesheet" href="/css/styles.css">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 50px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
-    input, button {
-      margin: 10px;
-      padding: 10px;
-      font-size: 1rem;
+
+    .welcome-container {
+      padding: 2rem;
+      text-align: center;
+      max-width: 600px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      margin: 2rem auto;
+    }
+
+    .welcome-title {
+      color: #2d3748;
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .welcome-subtitle {
+      color: #4a5568;
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+
+    .player-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .player-input {
+      padding: 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+    }
+
+    .player-input:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .start-button {
+      background: #667eea;
+      color: white;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .start-button:hover {
+      background: #5a67d8;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    @media (max-width: 640px) {
+      .welcome-container {
+        margin: 1rem;
+        padding: 1.5rem;
+      }
+
+      .welcome-title {
+        font-size: 2rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Welcome to BoardZone</h1>
-    <form id="playerForm">
-      <label for="playerName">Enter your name:</label>
-      <input type="text" id="playerName" placeholder="Your name" required />
-      <button type="submit">Enter Game</button>
+  <div class="welcome-container fade-in">
+    <h1 class="welcome-title">Welcome to <span style="color: #667eea;">BoardZone</span></h1>
+    <p class="welcome-subtitle">The most exciting place to enjoy real-time board games!</p>
+    <form id="playerForm" class="player-form">
+      <input type="text" id="playerName" class="player-input" placeholder="Enter your name" required>
+      <button type="submit" class="start-button">Start Playing</button>
     </form>
   </div>
 
@@ -34,7 +108,7 @@
       const playerName = document.getElementById('playerName').value.trim();
       if (playerName) {
         localStorage.setItem('playerName', playerName);
-        window.location.href = 'select-mode.html';
+        window.location.href = '/select-mode.html';
       } else {
         alert('Please enter your name!');
       }
