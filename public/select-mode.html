@@ -1,19 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Select Mode - BoardZone</title>
+  <title>เลือกโหมดการเล่น - BoardZone</title>
   <link rel="stylesheet" href="/css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Sarabun', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      padding: 1rem;
     }
 
     .container {
+      background: rgba(255, 255, 255, 0.95);
       padding: 2rem;
       text-align: center;
-      max-width: 800px;
+      max-width: 700px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: #2d3748;
+      font-size: 2rem;
+      margin-bottom: 1rem;
     }
 
     .welcome-text {
@@ -29,37 +46,55 @@
 
     .options {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
       margin-top: 2rem;
     }
 
     .option {
       background: white;
-      padding: 2rem;
-      border-radius: 15px;
+      padding: 1.5rem;
+      border-radius: 12px;
       cursor: pointer;
       transition: all 0.3s ease;
       border: 2px solid #e2e8f0;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1rem;
+      gap: 0.75rem;
+      position: relative;
+      overflow: hidden;
     }
 
     .option:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      transform: translateY(-3px);
       border-color: #667eea;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+    }
+
+    .option::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: #667eea;
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .option:hover::before {
+      transform: scaleX(1);
     }
 
     .option-icon {
-      font-size: 2.5rem;
+      font-size: 2rem;
       color: #667eea;
     }
 
     .option-title {
-      font-size: 1.5rem;
+      font-size: 1.25rem;
       font-weight: 600;
       color: #2d3748;
     }
@@ -85,7 +120,7 @@
       }
 
       h1 {
-        font-size: 2rem;
+        font-size: 1.75rem;
       }
 
       .options {
@@ -96,26 +131,25 @@
 </head>
 <body>
   <div class="container fade-in">
-    <h1>Select Game Mode</h1>
-    <p class="welcome-text">Welcome, <span class="player-name" id="playerNameDisplay">Player</span>! Choose how you want to play:</p>
+    <h1>เลือกโหมดการเล่น</h1>
+    <p class="welcome-text">ยินดีต้อนรับ <span class="player-name" id="playerNameDisplay">ผู้เล่น</span>! เลือกวิธีการเล่นที่คุณต้องการ:</p>
     
     <div class="options">
       <div class="option" onclick="window.location.href='create-room.html'">
         <div class="option-icon">🎮</div>
-        <div class="option-title">Create Room</div>
-        <p class="option-description">Create your own game room and invite friends to join. Be the host and set your own rules!</p>
+        <div class="option-title">สร้างห้อง</div>
+        <p class="option-description">สร้างห้องเกมของคุณเองและเชิญเพื่อนเข้าร่วม เป็นโฮสต์และกำหนดกติกาได้ตามใจ!</p>
       </div>
       
       <div class="option" onclick="window.location.href='find-room.html'">
         <div class="option-icon">🔍</div>
-        <div class="option-title">Find Room</div>
-        <p class="option-description">Join an existing game room. Browse available rooms and jump right into the action!</p>
+        <div class="option-title">ค้นหาห้อง</div>
+        <p class="option-description">เข้าร่วมห้องเกมที่มีอยู่ เลือกดูห้องที่เปิดอยู่และเริ่มเล่นได้ทันที!</p>
       </div>
     </div>
   </div>
 
   <script>
-    // แสดงชื่อผู้เล่นจาก localStorage
     document.addEventListener('DOMContentLoaded', () => {
       const playerName = localStorage.getItem('playerName');
       if (playerName) {

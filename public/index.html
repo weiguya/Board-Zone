@@ -1,13 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome to BoardZone</title>
+  <title>ยินดีต้อนรับสู่ BoardZone</title>
   <link rel="stylesheet" href="/css/styles.css">
+  <!-- เพิ่ม font สำหรับภาษาไทย -->
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Sarabun', sans-serif;
     }
 
     .welcome-container {
@@ -24,12 +27,14 @@
       color: #2d3748;
       font-size: 2.5rem;
       margin-bottom: 1.5rem;
+      font-weight: 600;
     }
 
     .welcome-subtitle {
       color: #4a5568;
       font-size: 1.1rem;
       margin-bottom: 2rem;
+      line-height: 1.6;
     }
 
     .player-form {
@@ -46,6 +51,11 @@
       border-radius: 8px;
       font-size: 1.1rem;
       transition: all 0.3s ease;
+      font-family: 'Sarabun', sans-serif;
+    }
+
+    .player-input::placeholder {
+      color: #a0aec0;
     }
 
     .player-input:focus {
@@ -63,6 +73,7 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
+      font-family: 'Sarabun', sans-serif;
     }
 
     .start-button:hover {
@@ -94,11 +105,11 @@
 </head>
 <body>
   <div class="welcome-container fade-in">
-    <h1 class="welcome-title">Welcome to <span style="color: #667eea;">BoardZone</span></h1>
-    <p class="welcome-subtitle">The most exciting place to enjoy real-time board games!</p>
+    <h1 class="welcome-title">ยินดีต้อนรับสู่ <span style="color: #667eea;">BoardZone</span></h1>
+    <p class="welcome-subtitle">สถานที่ที่สนุกที่สุดสำหรับการเล่นบอร์ดเกมแบบเรียลไทม์!</p>
     <form id="playerForm" class="player-form">
-      <input type="text" id="playerName" class="player-input" placeholder="Enter your name" required>
-      <button type="submit" class="start-button">Start Playing</button>
+      <input type="text" id="playerName" class="player-input" placeholder="กรุณาใส่ชื่อของคุณ" required>
+      <button type="submit" class="start-button">เริ่มเล่นเลย</button>
     </form>
   </div>
 
@@ -110,7 +121,7 @@
         localStorage.setItem('playerName', playerName);
         window.location.href = '/select-mode.html';
       } else {
-        alert('Please enter your name!');
+        alert('กรุณาใส่ชื่อของคุณ!');
       }
     });
   </script>

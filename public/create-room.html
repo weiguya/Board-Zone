@@ -1,23 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create Room - BoardZone</title>
-  <link rel="stylesheet" href="/css/styles.css">
+  <title>สร้างห้องเกม - BoardZone</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Sarabun', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      padding: 1rem;
     }
 
     .create-room-container {
-      padding: 2rem;
+      padding: 2.5rem;
       text-align: center;
       max-width: 600px;
-      background: white;
-      border-radius: 15px;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-      margin: 2rem auto;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      width: 100%;
     }
 
     .room-form {
@@ -37,15 +44,17 @@
       margin-bottom: 0.5rem;
       color: #4a5568;
       font-weight: 600;
+      font-size: 1rem;
     }
 
     .form-input {
       width: 100%;
       padding: 0.75rem 1rem;
       border: 2px solid #e2e8f0;
-      border-radius: 8px;
+      border-radius: 12px;
       font-size: 1rem;
       transition: all 0.3s ease;
+      font-family: 'Sarabun', sans-serif;
     }
 
     .form-input:focus {
@@ -54,9 +63,22 @@
       outline: none;
     }
 
+    .form-input::placeholder {
+      color: #a0aec0;
+    }
+
     select.form-input {
       background-color: white;
       cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      padding-right: 3rem;
+    }
+
+    select.form-input:hover {
+      border-color: #667eea;
     }
 
     .create-button {
@@ -64,12 +86,13 @@
       color: white;
       padding: 1rem 2rem;
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
       font-size: 1.1rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
       margin-top: 1rem;
+      font-family: 'Sarabun', sans-serif;
     }
 
     .create-button:hover {
@@ -80,14 +103,16 @@
 
     .room-title {
       color: #2d3748;
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
     }
 
     .room-subtitle {
       color: #4a5568;
       font-size: 1.1rem;
       margin-bottom: 2rem;
+      line-height: 1.6;
     }
 
     @keyframes fadeIn {
@@ -106,61 +131,67 @@
       }
 
       .room-title {
-        font-size: 2rem;
+        font-size: 1.75rem;
       }
     }
   </style>
 </head>
 <body>
   <div class="create-room-container fade-in">
-    <h1 class="room-title">Create a Room</h1>
-    <p class="room-subtitle">Set up your game room and invite friends to play!</p>
+    <h1 class="room-title">สร้างห้องเกม</h1>
+    <p class="room-subtitle">ตั้งค่าห้องเกมของคุณและเชิญเพื่อนมาเล่นด้วยกัน!</p>
     
     <form id="createRoomForm" class="room-form">
       <div class="form-group">
-        <label for="roomName">Room Name</label>
-        <input type="text" id="roomName" class="form-input" placeholder="Enter room name" required>
+        <label for="roomName">ชื่อห้อง</label>
+        <input type="text" id="roomName" class="form-input" placeholder="ใส่ชื่อห้องที่ต้องการ" required>
       </div>
       
       <div class="form-group">
-        <label for="game">Choose Game</label>
+        <label for="game">เลือกเกม</label>
         <select id="game" class="form-input" required>
           <option value="Forbidden Words">คำต้องห้าม</option>
           <option value="Who Am I">ฉันคือใคร</option>
-          <option value="Insider">Insider</option>
+          <option value="Insider">อินไซเดอร์</option>
         </select>
       </div>
 
       <div class="form-group">
-        <label for="maxPlayers">Number of Players</label>
-        <input type="number" id="maxPlayers" class="form-input" min="2" max="10" value="5" required>
+        <label for="maxPlayers">จำนวนผู้เล่น</label>
+        <select id="maxPlayers" class="form-input" required>
+          <option value="3">3 คน</option>
+          <option value="4">4 คน</option>
+          <option value="5" selected>5 คน</option>
+          <option value="6">6 คน</option>
+          <option value="7">7 คน</option>
+          <option value="8">8 คน</option>
+          <option value="9">9 คน</option>
+          <option value="10">10 คน</option>
+        </select>
       </div>
 
-      <button type="submit" class="create-button">Create Room</button>
+      <button type="submit" class="create-button">สร้างห้อง</button>
     </form>
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
-    // ตรวจสอบว่ามีชื่อผู้เล่นหรือไม่
     const playerName = localStorage.getItem('playerName');
     if (!playerName) {
-      alert('Please enter your player name first!');
+      alert('กรุณาใส่ชื่อผู้เล่นก่อน!');
       window.location.href = '/';
     }
 
     const socket = io();
 
-    // เช็กการเชื่อมต่อ Socket.IO
     socket.on('connect', () => {
-      console.log('Connected to Socket.IO server!');
+      console.log('เชื่อมต่อกับ Socket.IO server สำเร็จ!');
     });
 
     socket.on('connect_error', (err) => {
-      console.error('Socket.IO connection error:', err);
+      console.error('เกิดข้อผิดพลาดในการเชื่อมต่อ Socket.IO:', err);
     });
 
-    // ฟังก์ชันจัดการการสร้างห้อง
     document.getElementById('createRoomForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const roomName = document.getElementById('roomName').value.trim();
@@ -168,28 +199,23 @@
       const maxPlayers = parseInt(document.getElementById('maxPlayers').value);
 
       if (!roomName) {
-        alert('Please enter a room name.');
+        alert('กรุณาใส่ชื่อห้อง');
         return;
       }
 
       if (!game || !maxPlayers) {
-        alert('Please fill in all fields!');
+        alert('กรุณากรอกข้อมูลให้ครบทุกช่อง!');
         return;
       }
 
-      // เก็บข้อมูลใน Local Storage
       localStorage.setItem('roomName', roomName);
       localStorage.setItem('game', game);
       localStorage.setItem('maxPlayers', maxPlayers);
 
-      // ส่งข้อมูลไปที่เซิร์ฟเวอร์
       socket.emit('create room', { roomName, game, maxPlayers });
-
-      // พาไปหน้า Waiting Room
       window.location.href = '/waiting-room.html';
     });
 
-    // ฟังข้อผิดพลาดจากเซิร์ฟเวอร์
     socket.on('error', ({ message }) => {
       alert(message);
     });
