@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ค้นหาห้อง - BoardZone</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #667eea;
+        }
+
+        .rooms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .room-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .room-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .room-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .room-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .room-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-open {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-full {
+            background: #fed7d7;
+            color: #822727;
+        }
+
+        .room-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #4a5568;
+        }
+
+        .info-item i {
+            color: #667eea;
+        }
+
+        .join-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .join-btn:hover:not(:disabled) {
+            background: #5a67d8;
+        }
+
+        .join-btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+        }
+
+        .no-rooms {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 12px;
+            color: #4a5568;
+        }
+
+        .refresh-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .refresh-btn:hover {
+            background: #5a67d8;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .refresh-btn i {
+            transition: transform 0.3s;
+        }
+
+        .refresh-btn:hover i {
+            animation: spin 1s linear infinite;
+        }
+
+        @media (max-width: 640px) {
+            .rooms-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-bar {
+                flex-direction: column;
+            }
+
+            .search-bar input,
+            .search-bar button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="ค้นหาชื่อห้องหรือเกม...">
+                <button class="refresh-btn" onclick="refreshRooms()">
+                    <i class="fas fa-sync-alt"></i>
+                    รีเฟรช
+                </button>
+            </div>
+        </div>
+
+        <div id="roomsGrid" class="rooms-grid">
+            <!-- ห้องจะถูกเพิ่มที่นี่ด้วย JavaScript -->
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const playerName = localStorage.getItem('playerName');
+
+        if (!playerName) {
+            window.location.href = '/';
+        }
+
+        // ขอรายการห้องเมื่อโหลดหน้า
+        socket.emit('get rooms');
+
+        // รับรายการห้องและแสดงผล
+        socket.on('rooms list', (rooms) => {
+            const roomsGrid = document.getElementById('roomsGrid');
+            const searchValue = document.getElementById('searchInput').value.toLowerCase();
+            
+            if (!rooms || Object.keys(rooms).length === 0) {
+                roomsGrid.innerHTML = `
+                    <div class="no-rooms">
+                        <i class="fas fa-search fa-3x" style="color: #cbd5e0; margin-bottom: 1rem;"></i>
+                        <h2>ไม่พบห้องที่เปิดอยู่</h2>
+                        <p>ลองรีเฟรชใหม่หรือสร้างห้องของคุณเอง</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const roomsHTML = Object.entries(rooms)
+                .filter(([roomName, room]) => {
+                    const searchLower = searchValue.toLowerCase();
+                    return roomName.toLowerCase().includes(searchLower) || 
+                           room.game.toLowerCase().includes(searchLower);
+                })
+                .map(([roomName, room]) => {
+                    const isFull = room.players.length >= room.maxPlayers;
+                    return `
+                        <div class="room-card">
+                            <div class="room-header">
+                                <div class="room-name">${roomName}</div>
+                                <span class="room-status ${isFull ? 'status-full' : 'status-open'}">
+                                    ${isFull ? 'เต็ม' : 'ว่าง'}
+                                </span>
+                            </div>
+                            <div class="room-info">
+                                <div class="info-item">
+                                    <i class="fas fa-gamepad"></i>
+                                    <span>${room.game}</span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-users"></i>
+                                    <span>${room.players.length}/${room.maxPlayers}</span>
+                                </div>
+                            </div>
+                            <button class="join-btn" 
+                                    onclick="joinRoom('${roomName}')"
+                                    ${isFull ? 'disabled' : ''}>
+                                ${isFull ? 'ห้องเต็ม' : 'เข้าร่วม'}
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+
+            roomsGrid.innerHTML = roomsHTML || `
+                <div class="no-rooms">
+                    <i class="fas fa-search fa-3x" style="color: #cbd5e0; margin-bottom: 1rem;"></i>
+                    <h2>ไม่พบห้องที่ค้นหา</h2>
+                    <p>ลองค้นหาด้วยคำอื่น หรือรีเฟรชใหม่</p>
+                </div>
+            `;
+        });
+
+        // ฟังก์ชันรีเฟรชรายการห้อง
+        function refreshRooms() {
+            socket.emit('get rooms');
+        }
+
+        // ฟังก์ชันเข้าร่วมห้อง
+        function joinRoom(roomName) {
+            localStorage.setItem('roomName', roomName);
+            localStorage.setItem('isHost', 'false');
+            
+            socket.emit('join room', {
+                roomName: roomName,
+                playerName: playerName,
+                isHost: false
+            });
+
+            window.location.href = '/waiting-room.html';
+        }
+
+        // ค้นหาแบบ Real-time
+        document.getElementById('searchInput').addEventListener('input', function() {
+            socket.emit('get rooms');
+        });
+
+        // รีเฟรชรายการห้องทุก 10 วินาที
+        setInterval(refreshRooms, 10000);
+
+        // แสดง error ถ้ามี
+        socket.on('error', (error) => {
+            alert(error.message || 'เกิดข้อผิดพลาด กรุณาลองใหม่');
+        });
+    </script>
+</body>
+</html>
