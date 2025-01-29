@@ -359,3 +359,13 @@
   </script>
 </body>
 </html>
+socket.on('connect', () => {
+    console.log('Connected to server');
+    console.log('Player Name:', playerName);
+    console.log('Room Name:', roomName);
+});
+
+socket.on('room updated', (data) => {
+    console.log('Room updated event received:', data);
+    // ... rest of your code
+});
