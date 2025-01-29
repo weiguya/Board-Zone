@@ -15,10 +15,11 @@
       justify-content: center;
       margin: 0;
       padding: 1rem;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .create-room-container {
-      padding: 2.5rem;
+      padding: 2rem;
       text-align: center;
       max-width: 600px;
       background: rgba(255, 255, 255, 0.95);
@@ -93,6 +94,7 @@
       transition: all 0.3s ease;
       margin-top: 1rem;
       font-family: 'Sarabun', sans-serif;
+      width: 100%;
     }
 
     .create-button:hover {
@@ -126,12 +128,41 @@
 
     @media (max-width: 640px) {
       .create-room-container {
-        margin: 1rem;
+        margin: 0.5rem;
         padding: 1.5rem;
+        border-radius: 15px;
       }
 
       .room-title {
         font-size: 1.75rem;
+      }
+
+      .room-subtitle {
+        font-size: 1rem;
+      }
+
+      .form-input {
+        min-height: 44px;
+        font-size: 16px;
+      }
+
+      .create-button {
+        padding: 0.875rem 1.5rem;
+      }
+
+      .form-group label {
+        font-size: 0.95rem;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .create-room-container {
+        padding: 1rem;
+      }
+
+      .room-form {
+        gap: 1rem;
+        margin: 1rem auto;
       }
     }
   </style>
@@ -176,48 +207,53 @@
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
+    // เช็คว่ามีชื่อผู้เล่นใน localStorage หรือไม่
     const playerName = localStorage.getItem('playerName');
     if (!playerName) {
-      alert('กรุณาใส่ชื่อผู้เล่นก่อน!');
-      window.location.href = '/';
+      window.location.href = '/index.html';
     }
 
     const socket = io();
 
+    // เช็คการเชื่อมต่อ Socket.IO
     socket.on('connect', () => {
-      console.log('เชื่อมต่อกับ Socket.IO server สำเร็จ!');
+      console.log('เชื่อมต่อกับ Socket.IO server สำเร็จ');
     });
 
     socket.on('connect_error', (err) => {
       console.error('เกิดข้อผิดพลาดในการเชื่อมต่อ Socket.IO:', err);
+      alert('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง');
     });
 
-    document.getElementById('createRoomForm').addEventListener('submit', (e) => {
+    document.getElementById('createRoomForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      const roomName = document.getElementById('roomName').value.trim();
+      
+      // เก็บข้อมูลจากฟอร์ม
+      const roomName = document.getElementById('roomName').value;
       const game = document.getElementById('game').value;
-      const maxPlayers = parseInt(document.getElementById('maxPlayers').value);
-
-      if (!roomName) {
-        alert('กรุณาใส่ชื่อห้อง');
-        return;
-      }
-
-      if (!game || !maxPlayers) {
-        alert('กรุณากรอกข้อมูลให้ครบทุกช่อง!');
-        return;
-      }
-
+      const maxPlayers = document.getElementById('maxPlayers').value;
+      
+      // เก็บข้อมูลเพิ่มเติมใน localStorage สำหรับใช้ในหน้า waiting room
       localStorage.setItem('roomName', roomName);
-      localStorage.setItem('game', game);
+      localStorage.setItem('isHost', 'true');
+      localStorage.setItem('gameType', game);
       localStorage.setItem('maxPlayers', maxPlayers);
-
-      socket.emit('create room', { roomName, game, maxPlayers });
-      window.location.href = '/waiting-room.html';
+      
+      // ส่ง socket event เพื่อสร้างห้องบน server
+      socket.emit('create room', { roomName, playerName });
     });
 
-    socket.on('error', ({ message }) => {
-      alert(message);
+    // รับการตอบกลับจาก server
+    socket.on('error', (error) => {
+      alert(error.message);
+    });
+
+    // เมื่อห้องถูกสร้างสำเร็จ (server ส่ง rooms updated มา)
+    socket.on('rooms updated', (data) => {
+      const roomName = localStorage.getItem('roomName');
+      if (data.rooms.includes(roomName)) {
+        window.location.href = '/waiting-room.html';
+      }
     });
   </script>
 </body>
