@@ -1,371 +1,461 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ห้องรอเกม - BoardZone</title>
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Sarabun', sans-serif;
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ห้องรอเกม - BoardZone</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #2d3748;
+        }
 
-    .container {
-      display: flex;
-      width: 90%;
-      max-width: 1200px;
-      height: 80vh;
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-      margin: 2rem;
-    }
+        .container {
+            width: 90%;
+            max-width: 900px;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
 
-    .left-section {
-      flex: 3;
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-    }
+        .room-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
 
-    .right-section {
-      flex: 2;
-      background-color: #f8fafc;
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      border-left: 1px solid #e2e8f0;
-    }
+        .room-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin: 0;
+        }
 
-    .room-header {
-      margin-bottom: 2rem;
-    }
+        .room-info {
+            display: flex;
+            gap: 1.5rem;
+        }
 
-    .room-title {
-      color: #2d3748;
-      font-size: 2rem;
-      margin: 0 0 0.5rem 0;
-      font-weight: 600;
-    }
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            color: #4a5568;
+            padding: 0.5rem 1rem;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
 
-    .room-info {
-      color: #667eea;
-      font-size: 1.2rem;
-      margin: 0.5rem 0;
-      font-weight: 600;
-    }
+        .info-item i {
+            color: #667eea;
+        }
 
-    .room-subtitle {
-      color: #4a5568;
-      font-size: 1.1rem;
-      margin: 1rem 0;
-      line-height: 1.6;
-    }
+        .players-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
 
-    .player-list {
-      background: #f8fafc;
-      border-radius: 15px;
-      padding: 1.5rem;
-      flex-grow: 1;
-      margin-top: 1rem;
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
-    }
+        .player-card {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
 
-    .player-list h2 {
-      color: #2d3748;
-      font-size: 1.5rem;
-      margin: 0 0 1rem 0;
-    }
+        .player-card.empty {
+            border: 2px dashed #cbd5e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 120px;
+            background: #f8fafc;
+        }
 
-    #playersList {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
+        .player-card.active {
+            border-color: #667eea;
+            background: white;
+        }
 
-    .player-item {
-      background: white;
-      padding: 0.75rem 1rem;
-      border-radius: 10px;
-      border: 2px solid #e2e8f0;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
+        .player-avatar {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 0.8rem;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    .player-item.host {
-      border-color: #667eea;
-    }
+        .active .player-avatar {
+            background: #667eea;
+            color: white;
+        }
 
-    .host-badge {
-      background: #667eea;
-      color: white;
-      padding: 0.25rem 0.5rem;
-      border-radius: 6px;
-      font-size: 0.875rem;
-      margin-left: auto;
-    }
+        .player-name {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
 
-    .chat-title {
-      color: #2d3748;
-      font-size: 1.5rem;
-      margin: 0 0 1rem 0;
-      font-weight: 600;
-    }
+        .host-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: #fef3c7;
+            color: #92400e;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
 
-    #chatMessages {
-      flex: 1;
-      background: white;
-      border: 2px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 1rem;
-      overflow-y: auto;
-      margin-bottom: 1rem;
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
-    }
+        .waiting-text {
+            color: #718096;
+            font-size: 0.9rem;
+        }
 
-    #chatMessages p {
-      margin: 0.5rem 0;
-      line-height: 1.5;
-      word-break: break-word;
-    }
+        .ready-btn {
+            width: 100%;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Sarabun', sans-serif;
+        }
 
-    #chatMessages p strong {
-      color: #667eea;
-      font-weight: 600;
-    }
+        .ready-btn:not(.cancel) {
+            background: #48bb78;
+            color: white;
+        }
 
-    .system-message {
-      text-align: center;
-      color: #718096;
-      font-style: italic;
-      margin: 0.5rem 0;
-    }
+        .ready-btn:hover:not(.cancel) {
+            background: #38a169;
+        }
 
-    #chatForm {
-      display: flex;
-      gap: 1rem;
-    }
+        .ready-btn.cancel {
+            background: #f56565;
+            color: white;
+        }
 
-    .chat-input {
-      flex: 1;
-      padding: 0.75rem 1rem;
-      border: 2px solid #e2e8f0;
-      border-radius: 12px;
-      font-size: 1rem;
-      transition: all 0.3s ease;
-      font-family: 'Sarabun', sans-serif;
-    }
+        .ready-btn.cancel:hover {
+            background: #e53e3e;
+        }
 
-    .chat-input:focus {
-      outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
+        .ready-status {
+            margin-top: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            text-align: center;
+        }
 
-    .send-button {
-      background: #667eea;
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 12px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-family: 'Sarabun', sans-serif;
-    }
+        .ready-status.ready {
+            background: #c6f6d5;
+            color: #22543d;
+        }
 
-    .start-game-button {
-      background: #48bb78;
-      color: white;
-      padding: 1rem 2rem;
-      border: none;
-      border-radius: 12px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin-top: 1.5rem;
-      font-family: 'Sarabun', sans-serif;
-    }
+        .ready-status:not(.ready) {
+            background: #fed7d7;
+            color: #822727;
+        }
 
-    .start-game-button:disabled {
-      background: #a0aec0;
-      cursor: not-allowed;
-    }
+        .required-players {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
 
-    @media (max-width: 768px) {
-      .container {
-        flex-direction: column;
-        height: auto;
-        min-height: 90vh;
-      }
+        .leave-btn {
+            width: 100%;
+            max-width: 300px;
+            margin: 1rem auto;
+            padding: 0.75rem;
+            background: #cbd5e0;
+            color: #4a5568;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            font-family: 'Sarabun', sans-serif;
+        }
 
-      .left-section, .right-section {
-        flex: none;
-      }
+        .leave-btn:hover {
+            background: #a0aec0;
+            color: #2d3748;
+        }
 
-      .right-section {
-        border-left: none;
-        border-top: 1px solid #e2e8f0;
-      }
-    }
-  </style>
+        .start-game-btn {
+            width: 100%;
+            max-width: 300px;
+            margin: 1rem auto;
+            padding: 0.75rem;
+            background: linear-gradient(to right, #48bb78, #38a169);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        .start-game-btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+        }
+
+        .start-game-btn:not(:disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.2);
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
+                width: 95%;
+            }
+
+            .room-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .room-info {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .players-container {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div class="left-section">
-      <div class="room-header">
-        <h1 class="room-title">ห้องรอเกม</h1>
-        <p class="room-info" id="roomName">ห้อง: กำลังโหลด...</p>
-        <p class="room-info" id="gameType">เกม: กำลังโหลด...</p>
-        <p class="room-info" id="playerCount">ผู้เล่น: <span>0/0</span></p>
-        <p class="room-subtitle">กำลังรอผู้เล่นคนอื่นเข้าร่วม...</p>
-      </div>
-      <div class="player-list">
-        <h2>รายชื่อผู้เล่น</h2>
-        <div id="playersList"></div>
-      </div>
-      <button class="start-game-button" id="startGameButton" style="display: none;" disabled>เริ่มเกม</button>
+    <div class="container">
+        <div class="room-header">
+            <h1 class="room-title" id="roomName">ห้อง: กำลังโหลด...</h1>
+            <div class="room-info">
+                <div class="info-item">
+                    <i class="fas fa-users"></i>
+                    <span id="playerCount">0/5</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-gamepad"></i>
+                    <span id="gameType">กำลังโหลด...</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="playersRequired" class="required-players" style="display: none;">
+            <i class="fas fa-exclamation-circle"></i>
+            ต้องการผู้เล่นอีก <span id="requiredCount">0</span> คน เพื่อเริ่มเกม
+        </div>
+
+        <div class="players-container" id="playersList">
+            <!-- จะถูกเติมด้วย JavaScript -->
+        </div>
+
+        <button id="startGameBtn" class="start-game-btn" style="display: none;" disabled>
+            เริ่มเกม
+        </button>
+        
+        <button id="leaveRoomBtn" class="leave-btn" onclick="leaveRoom()">
+            ออกจากห้อง
+        </button>
     </div>
 
-    <div class="right-section">
-      <h2 class="chat-title">ห้องแชท</h2>
-      <div id="chatMessages">
-        <p class="system-message">ยินดีต้อนรับเข้าสู่ห้องแชท!</p>
-      </div>
-      <form id="chatForm">
-        <input type="text" id="chatInput" class="chat-input" placeholder="พิมพ์ข้อความ..." required>
-        <button type="submit" class="send-button">ส่ง</button>
-      </form>
-    </div>
-  </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const roomName = localStorage.getItem('roomName') || '';
+        const playerName = localStorage.getItem('playerName') || '';
+        const gameType = localStorage.getItem('gameType') || 'ไม่ระบุ';
+        const maxPlayers = parseInt(localStorage.getItem('maxPlayers')) || 5;
+        const isHost = localStorage.getItem('isHost') === 'true';
+        const minPlayers = 2; // จำนวนผู้เล่นขั้นต่ำ
 
-<script src="/socket.io/socket.io.js"></script>
-  <script>
-    const socket = io();
-    const roomName = localStorage.getItem('roomName');
-    const playerName = localStorage.getItem('playerName');
-    const gameType = localStorage.getItem('gameType');
-    const maxPlayers = localStorage.getItem('maxPlayers');
-
-    // ตรวจสอบข้อมูลที่จำเป็น
-    if (!roomName || !playerName || !maxPlayers) {
-      alert('ไม่พบข้อมูลที่จำเป็น!');
-      window.location.href = '/';
-    }
-
-    // แสดงข้อมูลห้อง
-    document.getElementById('roomName').textContent = `ห้อง: ${roomName}`;
-    document.getElementById('gameType').textContent = `เกม: ${gameType}`;
-    document.getElementById('playerCount').innerHTML = `ผู้เล่น: <span>0/${maxPlayers}</span>`;
-
-    // แสดงปุ่มเริ่มเกมสำหรับโฮสต์
-    const isHost = localStorage.getItem('isHost') === 'true';
-    const startGameButton = document.getElementById('startGameButton');
-    if (isHost) {
-      startGameButton.style.display = 'block';
-    }
-
-    // เข้าร่วมห้อง
-    socket.emit('join room', { roomName, playerName });
-
-    // อัพเดทรายชื่อผู้เล่น
-    socket.on('room updated', (data) => {
-      const { players } = data;
-      const playersList = document.getElementById('playersList');
-      const playerCount = document.querySelector('#playerCount span');
-      
-      // อัพเดทจำนวนผู้เล่น
-      playerCount.textContent = `${players.length}/${maxPlayers}`;
-      
-      // อัพเดทรายชื่อผู้เล่น
-      playersList.innerHTML = '';
-      players.forEach((player, index) => {
-        const playerItem = document.createElement('div');
-        playerItem.className = `player-item ${index === 0 ? 'host' : ''}`;
-        
-        const nameSpan = document.createElement('span');
-        nameSpan.textContent = player.name;
-        playerItem.appendChild(nameSpan);
-        
-        if (index === 0) {
-          const hostBadge = document.createElement('span');
-          hostBadge.className = 'host-badge';
-          hostBadge.textContent = 'เจ้าของห้อง';
-          playerItem.appendChild(hostBadge);
+        if (!roomName || !playerName) {
+            window.location.href = '/';
         }
-        
-        playersList.appendChild(playerItem);
-      });
 
-      // อัพเดทสถานะปุ่มเริ่มเกม
-      if (isHost) {
-        const minPlayers = 3; // จำนวนผู้เล่นขั้นต่ำ
-        startGameButton.disabled = players.length < minPlayers;
-        startGameButton.title = players.length < minPlayers ? 
-          `ต้องมีผู้เล่นอย่างน้อย ${minPlayers} คน` : 
-          'พร้อมเริ่มเกม';
-      }
-    });
+        document.getElementById('roomName').textContent = `ห้อง: ${roomName}`;
+        document.getElementById('gameType').textContent = gameType;
 
-    // จัดการการแชท
-    document.getElementById('chatForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const message = document.getElementById('chatInput').value.trim();
-      if (message) {
-        socket.emit('chat message', { roomName, playerName, message });
-        document.getElementById('chatInput').value = '';
-      }
-    });
+        const startGameBtn = document.getElementById('startGameBtn');
+        if (isHost) {
+            startGameBtn.style.display = 'block';
+        }
 
-    socket.on('chat message', ({ playerName, message }) => {
-      const chatMessages = document.getElementById('chatMessages');
-      const p = document.createElement('p');
-      p.innerHTML = `<strong>${playerName}</strong>: ${message}`;
-      chatMessages.appendChild(p);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    });
+        // เชื่อมต่อและเข้าร่วมห้อง
+        socket.on('connect', () => {
+            socket.emit('join room', {
+                roomName,
+                playerName,
+                isHost,
+                game: gameType,
+                maxPlayers
+            });
+        });
 
-    // เริ่มเกม
-    startGameButton.addEventListener('click', () => {
-      if (!startGameButton.disabled) {
-        socket.emit('start game', { roomName });
-      }
-    });
+        // รับการอัพเดทข้อมูลห้อง
+        socket.on('room updated', (data) => {
+            const { players, maxPlayers: roomMaxPlayers } = data;
+            const currentPlayers = players.length;
+            const playersNeeded = Math.max(minPlayers - currentPlayers, 0);
+            
+            // อัพเดทจำนวนผู้เล่น
+            document.getElementById('playerCount').textContent = 
+                `${currentPlayers}/${roomMaxPlayers || maxPlayers}`;
 
-    socket.on('game started', () => {
-      window.location.href = '/game.html';
-    });
+            // แสดง/ซ่อนข้อความแจ้งเตือนจำนวนผู้เล่นที่ต้องการ
+            const playersRequired = document.getElementById('playersRequired');
+            if (currentPlayers < minPlayers) {
+                playersRequired.style.display = 'block';
+                document.getElementById('requiredCount').textContent = playersNeeded;
+            } else {
+                playersRequired.style.display = 'none';
+            }
 
-    // แสดงข้อความระบบเมื่อมีผู้เล่นเข้า/ออก
-    socket.on('room updated', (data) => {
-      const chatMessages = document.getElementById('chatMessages');
-      const systemMessage = document.createElement('p');
-      systemMessage.className = 'system-message';
-      systemMessage.textContent = `ผู้เล่นในห้อง: ${data.players.length} คน`;
-      chatMessages.appendChild(systemMessage);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    });
-  </script>
+            // อัพเดทรายชื่อผู้เล่น
+            const playersList = document.getElementById('playersList');
+            playersList.innerHTML = '';
+
+            // สร้างการ์ดสำหรับผู้เล่นที่เข้าร่วมแล้ว
+            players.forEach(player => {
+                const card = document.createElement('div');
+                card.className = 'player-card active';
+
+                const isCurrentPlayer = player.id === socket.id;
+                const readyButtonHtml = isCurrentPlayer && !player.isHost ? `
+                    <button class="ready-btn ${player.isReady ? 'cancel' : ''}" onclick="toggleReady()">
+                        ${player.isReady ? 'ยกเลิก' : 'พร้อม'}
+                    </button>
+                ` : '';
+
+                const readyStatusHtml = !isCurrentPlayer ? `
+                    <div class="ready-status ${player.isReady ? 'ready' : ''}">
+                        ${player.isReady ? 'พร้อม' : 'ยังไม่พร้อม'}
+                    </div>
+                ` : '';
+
+                card.innerHTML = `
+                    <div class="player-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="player-name">${player.name}</div>
+                    ${player.isHost ? '<span class="host-badge">เจ้าของห้อง</span>' : ''}
+                    ${readyButtonHtml}
+                    ${readyStatusHtml}
+                `;
+                playersList.appendChild(card);
+            });
+
+            // สร้างการ์ดว่างสำหรับสล็อตที่เหลือ
+            const emptySlots = maxPlayers - players.length;
+            for (let i = 0; i < emptySlots; i++) {
+                const emptyCard = document.createElement('div');
+                emptyCard.className = 'player-card empty';
+                emptyCard.innerHTML = '<span class="waiting-text">รอผู้เล่น...</span>';
+                playersList.appendChild(emptyCard);
+            }
+
+            // อัพเดทสถานะปุ่มเริ่มเกม (สำหรับเจ้าของห้อง)
+            if (isHost) {
+                const allPlayersReady = players.length >= minPlayers && 
+                                      players.every(p => p.isHost || p.isReady);
+                startGameBtn.disabled = !allPlayersReady;
+                startGameBtn.title = !allPlayersReady ? 
+                    'รอให้ผู้เล่นทุกคนพร้อม' : 'พร้อมเริ่มเกม';
+            }
+        });
+
+        // ฟังก์ชันสำหรับปุ่มพร้อม/ยกเลิก
+        function toggleReady() {
+            socket.emit('toggle ready', { roomName });
+        }
+
+        // ฟังก์ชันสำหรับออกจากห้อง
+        function leaveRoom() {
+            socket.emit('leave room', { roomName });
+        }
+
+        // รับเหตุการณ์เมื่อออกจากห้อง
+        socket.on('left room', () => {
+            localStorage.removeItem('roomName');
+            localStorage.removeItem('isHost');
+            window.location.href = '/select-mode.html';
+        });
+
+        // จัดการ error ต่างๆ
+        socket.on('error', (error) => {
+            console.error('Socket error:', error);
+            const errorMessage = error.message || 'เกิดข้อผิดพลาด กรุณาลองใหม่';
+            alert(errorMessage);
+            
+            if (error.type === 'room_error') {
+                window.location.href = '/select-mode.html';
+            }
+        });
+
+        // จัดการ connection error
+        socket.on('connect_error', (error) => {
+            console.error('Connection error:', error);
+            alert('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง');
+        });
+
+        // จัดการ disconnect
+        socket.on('disconnect', () => {
+            console.log('Disconnected from server');
+            alert('การเชื่อมต่อขัดข้อง กำลังพยายามเชื่อมต่อใหม่...');
+        });
+
+        // Cleanup เมื่อออกจากหน้า
+        window.addEventListener('beforeunload', () => {
+            socket.emit('leave room', { roomName });
+        });
+
+        // รับเหตุการณ์เมื่อเกมเริ่ม
+        startGameBtn.addEventListener('click', () => {
+            socket.emit('start game', { roomName });
+        });
+
+        socket.on('game started', () => {
+            window.location.href = '/game.html';
+        });
+    </script>
 </body>
 </html>
-socket.on('connect', () => {
-    console.log('Connected to server');
-    console.log('Player Name:', playerName);
-    console.log('Room Name:', roomName);
-});
-
-socket.on('room updated', (data) => {
-    console.log('Room updated event received:', data);
-    // ... rest of your code
-});
